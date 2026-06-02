@@ -18,10 +18,15 @@ LiMBS employs a dual-block architecture consisting of a system-level descriptor 
 
 ```text
 parser/
-    Parser-related scripts
+   LiMBS INSANE and vesicle parser scripts
 
 web/
-    Flask-based web interface for generating LiMBS notation
+    app.py
+    lipid_registry.py
+    cg_templates.py
+
+web/templates/
+    form.html
 ```
 ## Included Tools
 
