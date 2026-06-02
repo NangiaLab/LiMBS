@@ -1,5 +1,6 @@
 # LiMBS
-**LipidMem-BigSMILES (LiMBS): A Standardized line notation for Lipid Membrane Simulations**
+**LipidMem-BigSMILES (LiMBS): A Standardized Line Notation for Lipid Membrane Simulations**
+
 LiMBS employs a dual-block architecture consisting of a system-level descriptor block and a chemical structure block, enabling independent specification of membrane geometry, composition, environmental conditions, and molecular identity.
 
 ## Current Features
@@ -32,4 +33,4 @@ web/templates/
 
 - LiMBS_insane.py: converts LiMBS notation into INSANE-compatible membrane builder input.
 - LiMBS_vesicle.py: converts LiMBS notation into TS2CG vesicle input.
-- Web interface for generating LiMBS notation interactively.
+- Generates LiMBS notation interactively through a Flask-based web application
