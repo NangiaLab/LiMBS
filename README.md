@@ -33,4 +33,4 @@ web/templates/
 
 - LiMBS_insane.py: converts LiMBS notation into INSANE-compatible membrane builder input.
 - LiMBS_vesicle.py: converts LiMBS notation into TS2CG vesicle input.
-- Generates LiMBS notation interactively through a Flask-based web application
+- Web interface: Generates LiMBS notation interactively through a Flask-based web application
