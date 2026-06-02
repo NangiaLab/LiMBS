@@ -1,7 +1,6 @@
 # LiMBS
 **LipidMem-BigSMILES (LiMBS): A Standardized line notation for Lipid Membrane Simulations**
 LiMBS employs a dual-block architecture consisting of a system-level descriptor block and a chemical structure block, enabling independent specification of membrane geometry, composition, environmental conditions, and molecular identity.
-##Purpose
 ## Current Features
 -Human-readable membrane notation
 -Machine-parseable grammar
