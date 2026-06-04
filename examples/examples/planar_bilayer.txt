@@ -1,2 +1,9 @@
-DPPC:16:0, PC-head, charge-0.0 || leaflets-u{DPPC:56}, -l{DPPC:56} || type:planar || box:[10,10,8] || sol:W || salt:0.15 NaCl || rand:0.1 || solr:0.5 || CG|[ [N(C)(C)(C)CC:^NC3] [OP(=O)(O):^PO4] [COC(=O):^GL1][COC(=O):^GL2 ][#TailA][#TailB]. {#TailA=[>][CCCC:^C1A][CCCC:^C2A][CCCC:^C3A][CCCC:^C4A]}. 
-{#TailB=[>][CCCC:^C1B][CCCC:^C2B][CCCC:^C3B][CCCC:^C4B]} |[^NC3] [^PO4] [^GL1] [^GL2] [#TailA][#TailB].{#TailA=[>][^C1A][^C2A][^C3A][^C4A]}. {#TailB=[>][^C1B][^C2B][^C3B][^C4B]} ]
+DPPC:16:0-sat, PC-head, charge 0.0 || leaflets -u{DPPC:56} -l{DPPC:56} || type:planar || box:[10,10,8] || sol:W || salt:0.15 NaCl || rand:0.1 || solr:0.5 || DPPC=CG|[
+[N(C)(C)(C)CC:^NC3] [OP(=O)(O)(O):^PO4] [COC(=O):^GL1] [COC(=O):^GL2] [#TailA] [#TailB].
+{#TailA=[>][CCCC:^C1A][CCCC:^C2A][CCCC:^C3A][CCCC:^C4A]}.
+{#TailB=[>][CCCC:^C1B][CCCC:^C2B][CCCC:^C3B][CCCC:^C4B]}
+|
+[^NC3] [^PO4] [^GL1] [^GL2] [#TailA] [#TailB].
+{#TailA=[>][^C1A][^C2A][^C3A][^C4A]}.
+{#TailB=[>][^C1B][^C2B][^C3B][^C4B]}
+]
