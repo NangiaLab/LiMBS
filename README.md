@@ -40,7 +40,7 @@ web/templates/
 ### Clone the repository
 
 ```bash
-git clone https://github.com/NangiaLab/LiMBS.git
+git clone https://github.com/NangiaLab/LiMBS
 cd LiMBS
 ```
 
