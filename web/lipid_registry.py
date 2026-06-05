@@ -12,6 +12,7 @@ LIPIDS = {
     "PAPC": {"header": "PAPC:16:0-20:3, PC-head, charge 0.0", "class": "PC", "tail_a": (20, 3), "tail_b": (16, 0), "apl": 0.64},
     "PUPC": {"header": "PUPC:16:0-22:6, PC-head, charge 0.0", "class": "PC", "tail_a": (22, 6), "tail_b": (16, 0), "apl": 0.64},
     "UPC":  {"header": "UPC:20:5-22:6, PC-head, charge 0.0", "class": "PC", "tail_a": (22, 6), "tail_b": (20, 5), "apl": 0.64},
+    "DIPC": {"header": "DIPC:18:2-18:2, PC-head, charge 0.0", "class": "PC", "tail_a": (18,2), "tail_b": (18,2), "apl":0.68},
     "APC":  {"header": "APC:20:4-22:5, PC-head, charge 0.0", "class": "PC", "tail_a": (22, 5), "tail_b": (20, 4), "apl": 0.64},
     "IPC":  {"header": "IPC:16:2-18:0, PC-head, charge 0.0", "class": "PC", "tail_a": (18, 0), "tail_b": (16, 2), "apl": 0.64},
     "OPC":  {"header": "OPC:16:1-18:1, PC-head, charge 0.0", "class": "PC", "tail_a": (18, 1), "tail_b": (16, 1), "apl": 0.64},
