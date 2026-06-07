@@ -114,7 +114,7 @@ def generate():
             f"sol:{sol} || "
             f"salt:{salt_conc} {salt_ion} || "
             f"rand:{rand} || "
-            f"solr:{solr} || "
+            f"solr:{solr} |+| "
             f"{cg_blocks}"
         )
 
@@ -218,4 +218,4 @@ def generate():
 
 
 if __name__ == "__main__":
-    app.run(host="127.0.0.1", port=5000, debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=True)
