@@ -105,7 +105,7 @@ def make_tail(length, double_bonds, suffix):
 
         (18, 0): [],
         (18, 1): [3],
-        (18, 2): [3, 4],
+        (18, 2): [2, 3],
 
         (20, 0): [],
         (20, 1): [3],
@@ -266,11 +266,6 @@ def generate_cg_block(name, lipid_class, tail_a, tail_b):
         bead_list = tail_a + tail_b
         return generate_explicit_block(name, bead_list)
 
-    if lipid_class not in HEADGROUPS:
-        raise ValueError(f"Unsupported lipid class: {lipid_class}")
-
-    head = HEADGROUPS[lipid_class] 
-def generate_cg_block(name, lipid_class, tail_a, tail_b):
     lipid_class = lipid_class.upper()
 
     if lipid_class in ("STEROL", "CHOL"):
