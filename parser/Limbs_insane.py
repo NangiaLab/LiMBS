@@ -150,7 +150,7 @@ class LiMBSParser:
         return system
 
     def _split_top_level(self, s: str) -> list:
-        """Split on '||' not inside [] or {}."""
+        """Split on '|+|' not inside [] or {}."""
         tokens, buf, depth, i = [], [], 0, 0
         while i < len(s):
             if s[i] in "[{":
