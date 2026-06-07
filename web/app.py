@@ -83,7 +83,7 @@ def generate():
             f"{headers} || "
             f"leaflets -u{{{vesicle_upper_block}}} -l{{{vesicle_lower_block}}} || "
             f"type:vesicle || "
-            f"box:[{box_x},{box_y},{box_z}] || "
+            f"box:[{box_x},{box_y},{box_z}] |+| "
             f"{cg_blocks}"
         )
 
