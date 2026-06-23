@@ -1,0 +1,68 @@
+LiMBS1.0 ||
+
+rsln:CG ||
+
+lsc:1 ||
+
+uls:1 ||
+
+lls:1 ||
+
+{DPPC:tails=16:0-16:0,head=PC,charge=0.0} ||
+
+leaflet:ratio{-u{DPPC:1.0}-l{DPPC:1.0}} ||
+
+type:vesicle ||
+
+box:[30.0,30.0,30.0]nm ||
+
+sol:W ||
+
+salt:0.15M NaCl
+
+|++|
+
+DPPC=CG|[
+
+[N(C)(C)(C)CC:^NC3]
+[OP(=O)(O)(O):^PO4]
+[CCOC(=O):^GL1]
+[COC(=O):^GL2]
+[#TailA]
+[#TailB]
+
+{#TailA=[>][CCCC:^C1A][CCCC:^C2A][CCCC:^C3A][CCCC:^C4A]}
+
+{#TailB=[>][CCCC:^C1B][CCCC:^C2B][CCCC:^C3B][CCCC:^C4B]}
+
+|
+
+[^NC3]
+[^PO4]
+[^GL1]
+[^GL2]
+[#TailA]
+[#TailB]
+
+{#TailA=[>][^C1A][^C2A][^C3A][^C4A]}
+
+{#TailB=[>][^C1B][^C2B][^C3B][^C4B]}
+
+]
+
+|+|
+
+NaCl=CG|[
+[Na+:^Na][Cl-:^Cl]
+|
+[^Na][^Cl]
+]
+
+|+|
+
+W=CG|[
+[OOOO:^W]
+|
+[^W]
+]
+
