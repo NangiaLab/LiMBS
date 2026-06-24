@@ -1,0 +1,141 @@
+{
+  "version": "1.0",
+  "resolution": "CG",
+  "lipid_species_count": 1,
+  "upper_leaflet_species_count": 1,
+  "lower_leaflet_species_count": 1,
+  "lipids": {
+    "DPPC": {
+      "tails": "16:0-16:0",
+      "head": "PC",
+      "charge": 0.0
+    }
+  },
+  "leaflets": {
+    "mode": "count",
+    "upper": {
+      "DPPC": 158
+    },
+    "lower": {
+      "DPPC": 158
+    }
+  },
+  "membrane_type": "planar",
+  "box": {
+    "values": [
+      10.0,
+      10.0,
+      8.0
+    ],
+    "unit": "nm"
+  },
+  "solvent": "W",
+  "salt": {
+    "concentration": 0.15,
+    "unit": "M",
+    "species_text": "NaCl",
+    "species": [
+      "NaCl"
+    ],
+    "formula": {
+      "Na": 1,
+      "Cl": 1
+    },
+    "ions": {
+      "Na": 1,
+      "Cl": 1
+    }
+  },
+  "species_blocks": {
+    "DPPC": {
+      "name": "DPPC",
+      "resolution": "CG",
+      "body": "[ [N(C)(C)(C)CC:^NC3] [OP(=O)(O)(O):^PO4] [CCOC(=O):^GL1] [COC(=O):^GL2] [#TailA] [#TailB] {#TailA=[>][CCCC:^C1A][CCCC:^C2A][CCCC:^C3A][CCCC:^C4A]} {#TailB=[>][CCCC:^C1B][CCCC:^C2B][CCCC:^C3B][CCCC:^C4B]} | [^NC3] [^PO4] [^GL1] [^GL2] [#TailA] [#TailB] {#TailA=[>][^C1A][^C2A][^C3A][^C4A]} {#TailB=[>][^C1B][^C2B][^C3B][^C4B]} ]",
+      "layer_count": 2,
+      "layers": [
+        {
+          "index": 1,
+          "body": "[N(C)(C)(C)CC:^NC3] [OP(=O)(O)(O):^PO4] [CCOC(=O):^GL1] [COC(=O):^GL2] [#TailA] [#TailB] {#TailA=[>][CCCC:^C1A][CCCC:^C2A][CCCC:^C3A][CCCC:^C4A]} {#TailB=[>][CCCC:^C1B][CCCC:^C2B][CCCC:^C3B][CCCC:^C4B]}"
+        },
+        {
+          "index": 2,
+          "body": "[^NC3] [^PO4] [^GL1] [^GL2] [#TailA] [#TailB] {#TailA=[>][^C1A][^C2A][^C3A][^C4A]} {#TailB=[>][^C1B][^C2B][^C3B][^C4B]}"
+        }
+      ],
+      "fragments_defined": [
+        "TailA",
+        "TailB"
+      ],
+      "fragments_used": [
+        "TailA",
+        "TailB"
+      ],
+      "beads": [
+        "C1A",
+        "C1B",
+        "C2A",
+        "C2B",
+        "C3A",
+        "C3B",
+        "C4A",
+        "C4B",
+        "GL1",
+        "GL2",
+        "NC3",
+        "PO4"
+      ],
+      "semantic_groups": [],
+      "semantic_group_definitions": {}
+    },
+    "NaCl": {
+      "name": "NaCl",
+      "resolution": "CG",
+      "body": "[ [Na+:^Na][Cl-:^Cl] | [^Na][^Cl] ]",
+      "layer_count": 2,
+      "layers": [
+        {
+          "index": 1,
+          "body": "[Na+:^Na][Cl-:^Cl]"
+        },
+        {
+          "index": 2,
+          "body": "[^Na][^Cl]"
+        }
+      ],
+      "fragments_defined": [],
+      "fragments_used": [],
+      "beads": [
+        "Cl",
+        "Na"
+      ],
+      "semantic_groups": [],
+      "semantic_group_definitions": {}
+    },
+    "W": {
+      "name": "W",
+      "resolution": "CG",
+      "body": "[ [OOOO:^W] | [^W] ]",
+      "layer_count": 2,
+      "layers": [
+        {
+          "index": 1,
+          "body": "[OOOO:^W]"
+        },
+        {
+          "index": 2,
+          "body": "[^W]"
+        }
+      ],
+      "fragments_defined": [],
+      "fragments_used": [],
+      "beads": [
+        "W"
+      ],
+      "semantic_groups": [],
+      "semantic_group_definitions": {}
+    }
+  },
+  "errors": [],
+  "warnings": [],
+  "valid": true
+}
