@@ -1,0 +1,116 @@
+LiMBS1.0 ||
+
+rsln:AA ||
+
+lsc:10 ||
+
+uls:10 ||
+
+lls:10 ||
+
+{CHOL:tails=sterol,head=CHOL,charge=0.0;DOPE:tails=18:1-18:1,head=PE,charge=0.0;DOPG:tails=18:1-18:1,head=PG,charge=-1.0;DOPS:tails=18:1-18:1,head=PS,charge=-1.0;DPPC:tails=16:0-16:0,head=PC,charge=0.0;POPA:tails=16:0-18:1,head=PA,charge=-1.0;POPC:tails=16:0-18:1,head=PC,charge=0.0;POPE:tails=16:0-18:1,head=PE,charge=0.0;POPG:tails=16:0-18:1,head=PG,charge=-1.0;POPS:tails=16:0-18:1,head=PS,charge=-1.0} ||
+
+leaflet:count{-u{CHOL:25,DOPE:16,DOPG:15,DOPS:15,DPPC:15,POPA:16,POPC:16,POPE:16,POPG:15,POPS:15}-l{CHOL:25,DOPE:16,DOPG:15,DOPS:15,DPPC:15,POPA:16,POPC:16,POPE:16,POPG:15,POPS:15}} ||
+
+type:planar ||
+
+box:[10.0,10.0,8.0]nm ||
+
+sol:TIP3P ||
+
+salt:0.15M NaCl
+
+|++|
+
+CHOL=AA|[
+C[C@H](CCCC(C)C)[C@H]1CC[C@@H]2[C@@]1(CC[C@H]3[C@H]2CC=C4[C@@]3(CC[C@@H](C4)O)C)C
+]
+
+|+|
+
+DOPE=AA|[
+{#T18_1=CCCCCCCCC=CCCCCCCCC}
+
+[N]CCOP(=O)(O)OCCOC(=O)[#T18_1]COC(=O)[#T18_1]
+]
+
+|+|
+
+DOPG=AA|[
+{#T18_1=CCCCCCCCC=CCCCCCCCC}
+
+OCCOCOP(=O)(O)OCCOC(=O)[#T18_1]COC(=O)[#T18_1]
+]
+
+|+|
+
+DOPS=AA|[
+{#T18_1=CCCCCCCCC=CCCCCCCCC}
+
+[N]C(C(=O)O)COP(=O)(O)OCCOC(=O)[#T18_1]COC(=O)[#T18_1]
+]
+
+|+|
+
+DPPC=AA|[
+{#T16=CCCCCCCCCCCCCCCC}
+
+[N](C)(C)(C)CCOP(=O)(O)OCCOC(=O)[#T16]COC(=O)[#T16]
+]
+
+|+|
+
+POPA=AA|[
+{#T16=CCCCCCCCCCCCCCCC}
+{#T18_1=CCCCCCCCC=CCCCCCCCC}
+
+OP(=O)(O)OCCOC(=O)[#T16]COC(=O)[#T18_1]
+]
+
+|+|
+
+POPC=AA|[
+{#T16=CCCCCCCCCCCCCCCC}
+{#T18_1=CCCCCCCCC=CCCCCCCCC}
+
+[N](C)(C)(C)CCOP(=O)(O)OCCOC(=O)[#T16]COC(=O)[#T18_1]
+]
+
+|+|
+
+POPE=AA|[
+{#T16=CCCCCCCCCCCCCCCC}
+{#T18_1=CCCCCCCCC=CCCCCCCCC}
+
+[N]CCOP(=O)(O)OCCOC(=O)[#T16]COC(=O)[#T18_1]
+]
+
+|+|
+
+POPG=AA|[
+{#T16=CCCCCCCCCCCCCCCC}
+{#T18_1=CCCCCCCCC=CCCCCCCCC}
+
+OCCOCOP(=O)(O)OCCOC(=O)[#T16]COC(=O)[#T18_1]
+]
+
+|+|
+
+POPS=AA|[
+{#T16=CCCCCCCCCCCCCCCC}
+{#T18_1=CCCCCCCCC=CCCCCCCCC}
+
+[N]C(C(=O)O)COP(=O)(O)OCCOC(=O)[#T16]COC(=O)[#T18_1]
+]
+
+|+|
+
+NaCl=AA|[
+[Na+][Cl-]
+]
+
+|+|
+
+TIP3P=AA|[
+[O]
+]
