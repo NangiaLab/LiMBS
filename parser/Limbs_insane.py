@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-LiMBS1.0 → INSANE exporter.
+LiMBS1.0 to INSANE exporter.
 
 Converts a validated LiMBS CG planar membrane file into an INSANE
 command line, then optionally executes it to produce membrane.gro
