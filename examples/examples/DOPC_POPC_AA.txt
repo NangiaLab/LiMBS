@@ -1,0 +1,51 @@
+LiMBS1.0 ||
+
+rsln:AA ||
+
+lsc:2 ||
+
+uls:2 ||
+
+lls:2 ||
+
+{DOPC:tails=18:1-18:1,head=PC,charge=0.0;POPC:tails=16:0-18:1,head=PC,charge=0.0} ||
+
+leaflet:count{-u{DOPC:71,POPC:72}-l{DOPC:71,POPC:72}} ||
+
+type:planar ||
+
+box:[10.0,10.0,8.0]nm ||
+
+sol:TIP3P ||
+
+salt:0.15M NaCl
+
+|++|
+
+DOPC=AA|[
+{#T18_1=CCCCCCCCC=CCCCCCCC}
+
+[N](C)(C)(C)CCOP(=O)(O)OCCOC(=O)[#T18_1]COC(=O)[#T18_1]
+]
+
+|+|
+
+POPC=AA|[
+{#T16=CCCCCCCCCCCCCCCC}
+
+{#T18_1=CCCCCCCCC=CCCCCCCC}
+
+[N](C)(C)(C)CCOP(=O)(O)OCCOC(=O)[#T16]COC(=O)[#T18_1]
+]
+
+|+|
+
+NaCl=AA|[
+[Na+][Cl-]
+]
+
+|+|
+
+TIP3P=AA|[
+[O]
+]
