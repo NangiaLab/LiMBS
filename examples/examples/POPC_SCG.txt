@@ -1,0 +1,74 @@
+LiMBS1.0 ||
+
+rsln:SCG ||
+
+lsc:1 ||
+
+uls:1 ||
+
+lls:1 ||
+
+{POPC:tails=16:0-18:1,head=PC,charge=0.0} ||
+
+leaflet:count{-u{POPC:147}-l{POPC:147}} ||
+
+type:planar ||
+
+box:[10.0,10.0,8.0]nm ||
+
+sol:WW ||
+
+salt:0.15M NaCl
+
+|++|
+
+POPC=SCG|[
+
+[N(C)(C)(C)CC:^NC3][OP(=O)(O)(O):^PO4][CCOC(=O):^GL1][COC(=O):^GL2][#TailA][#TailB]
+
+{#TailA=[>][CCCC:^C1A][CC(C=C):^D2A][CCCC:^C3A][CCCC:^C4A]}
+
+{#TailB=[>][CCCC:^C1B][CCCC:^C2B][CCCC:^C3B][CCCC:^C4B]}
+
+|
+
+[^NC3][^PO4][^GL1][^GL2][#TailA][#TailB]
+
+{#TailA=[>][^C1A][^D2A][^C3A][^C4A]}
+
+{#TailB=[>][^C1B][^C2B][^C3B][^C4B]}
+
+|
+
+[^^HEAD][^^GLYCEROL][^^TAIL]
+
+{^^HEAD=[^NC3][^PO4]}
+
+{^^GLYCEROL=[^GL1][^GL2]}
+
+{^^TAIL=[#TailA][#TailB]}
+
+]
+
+|+|
+
+NaCl=SCG|[
+[Na+:^Na][Cl-:^Cl]
+|
+[^Na][^Cl]
+|
+[^^CATION][^^ANION]
+{^^CATION=[^Na]}
+{^^ANION=[^Cl]}
+]
+
+|+|
+
+WW=SCG|[
+[OOOOOOOO:^WW]
+|
+[^WW]
+|
+[^^SOLVENT]
+{^^SOLVENT=[^WW]}
+]
