@@ -1,90 +1,62 @@
 LiMBS1.0 ||
-rsln: AA ||
-forcefield: CHARMM36 ||
-lsc: 6 ||
-uls: 1 ||
-lls: 5 ||
-
+rsln:AA ||
+lsc:6 ||
+uls:1 ||
+lls:5 ||
 {LPS:tails=mixed,head=K12_core_LPS,charge=-8.0;
 PVCL2:tails=16:0-18:1D11-16:0-18:1D11,head=CL,charge=-2.0;
 PMPE:tails=16:0-16:0,head=PE,charge=0.0;
 PMPG:tails=16:0-16:0,head=PG,charge=-1.0;
 PVPE:tails=16:0-18:1D11,head=PE,charge=0.0;
 PVPG:tails=16:0-18:1D11,head=PG,charge=-1.0} ||
-
 leaflet:count{-u{LPS:99}-l{PVCL2:26,PMPE:104,PMPG:13,PVPE:104,PVPG:26}} ||
-
 type:planar ||
-
 box:[13.7,13.7,8.0]nm ||
-
 sol:TIP3P ||
-
-salt:0.15M NaCl
-
+salt:0.15M CaCl2
 |++|
-
 LPS=AA|[
 {#KDO=OC[C@@H](O)[C@H]1O[C@](O)(C[C@@H](O)[C@H]1O)C(=O)(O)}
 {#HEP=OC[C@@H](O)[C@@H]1[C@H](OP(=O)(O)O)[C@@H](O)[C@@H](O)[C@H]O1}
 {#GLC=OC[C@H]1O[C@H](O)[C@H](O)[C@@H](O)[C@@H]1O}
 {#GAL=OC[C@H]1O[C@H](O)[C@H](O)[C@H](O)[C@@H]1O}
 {#LipidA=CCCCCCCCCCCCCC(=O)OC(CCCCCCCCCCC)CC(=O)OC1C(NC(=O)CC(CCCCCCCCCCC)OC(=O)CCCCCCCCCCC)C(OCC2OC(OP(=O)([O])[O])C(NC(=O)CC(O)CCCCCCCCCCC)C(OC(=O)CC(O)CCCCCCCCCCC)C2O)OC(CO)C1OP(=O)([O])[O]}
-
 [#LipidA][#KDO][#KDO][#HEP][#GLC][#GLC][#HEP][#HEP][#GLC][#GAL]
 ]
-
 |+|
-
 PVCL2=AA|[
 {#T16=CCCCCCCCCCCCCCCC}
 {#T18_1_D11=CCCCCCCCCCC=CCCCCCC}
-
 [#T18_1_D11]C(=O)OCCOC(=O)[#T16]COP(=O)OOCCOCOP(=O)OOCCOC(=O)[#T18_1_D11]COC(=O)[#T16]
 ]
-
 |+|
-
 PMPE=AA|[
 {#T16=CCCCCCCCCCCCCCCC}
-
 [N]CCOP(=O)OOCCOC(=O)[#T16]COC(=O)[#T16]
 ]
-
 |+|
-
 PMPG=AA|[
 {#T16=CCCCCCCCCCCCCCCC}
-
 OCCOCOP(=O)OOCCOC(=O)[#T16]COC(=O)[#T16]
 ]
-
 |+|
-
 PVPE=AA|[
 {#T16=CCCCCCCCCCCCCCCC}
 {#T18_1_D11=CCCCCCCCCCC=CCCCCCC}
-
 [N]CCOP(=O)OOCCOC(=O)[#T18_1_D11]COC(=O)[#T16]
 ]
-
 |+|
-
 PVPG=AA|[
 {#T16=CCCCCCCCCCCCCCCC}
 {#T18_1_D11=CCCCCCCCCCC=CCCCCCC}
-
 OCCOCOP(=O)OOCCOC(=O)[#T18_1_D11]COC(=O)[#T16]
 ]
-
 |+|
-
 TIP3P=AA|[
 [O]
 ]
-
 |+|
-
-NaCl=AA|[
-[Na+][Cl-]
+CaCl2=AA|[
+[Ca2+][Cl-][Cl-]
 ]
+
