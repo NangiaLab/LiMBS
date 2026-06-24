@@ -1,0 +1,1 @@
+LMB-E040: Invalid box block. Expected: box:[10.0,10.0,8.0]nm

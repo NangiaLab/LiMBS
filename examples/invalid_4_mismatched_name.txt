@@ -1,0 +1,41 @@
+LiMBS1.0 ||
+
+rsln:AA ||
+
+lsc:1 ||
+
+uls:1 ||
+
+lls:1 ||
+
+{DPPC:tails=16:0-16:0,head=PC,charge=0.0} ||
+
+leaflet:count{-u{DPPC:158}-l{DPPC:158}} ||
+
+type:planar ||
+
+box:[10.0,10.0,8.0]nm ||
+
+sol:TIP3P ||
+
+salt:0.15M NaCl
+
+|++|
+
+DPPC_AA=AA|[
+{#T16=CCCCCCCCCCCCCCCC}
+
+[N](C)(C)(C)CCOP(=O)(O)OCCOC(=O)[#T16]COC(=O)[#T16]
+]
+
+|+|
+
+NaCl=AA|[
+[Na+][Cl-]
+]
+
+|+|
+
+TIP3P=AA|[
+[O]
+]

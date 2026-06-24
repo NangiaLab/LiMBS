@@ -1,0 +1,89 @@
+LiMBS1.0 ||
+
+rsln:CG ||
+
+lsc:2 ||
+
+uls:2 ||
+
+lls:2 ||
+
+{CHOL:tails=sterol,head=CHOL,charge=0.0} ||
+
+{DOPC:tails=18:1-18:1,head=PC,charge=0.0} ||
+
+leaflet:count{-u{CHOL:16,DOPC:145}-l{CHOL:16,DOPC:145}} ||
+
+type:planar ||
+
+box:[10.0,10.0,8.0]nm ||
+
+sol:W ||
+
+salt:0.15M NaCl
+
+|++|
+
+CHOL=CG|[
+
+[CCC(O):^ROH] [#TailA] [#TailB]
+
+{#TailA=[>][(C=C)C:^R1][CCC:^R2][CCC:^R3][CC:^R4][CC:^R5][CCC:^R6]}
+
+{#TailB=[>][CCC:^C1][CCCCC:^C2]}
+
+|
+
+[^ROH] [#TailA] [#TailB]
+
+{#TailA=[>][^R1][^R2][^R3][^R4][^R5][^R6]}
+
+{#TailB=[>][^C1][^C2]}
+
+]
+
+|+|
+
+DOPC=CG|[
+
+[N(C)(C)(C)CC:^NC3]
+[OP(=O)(O)(O):^PO4]
+[CCOC(=O):^GL1]
+[COC(=O):^GL2]
+[#TailA]
+[#TailB]
+
+{#TailA=[>][CCCC:^C1A][CC(C=C):^D2A][CCCC:^C3A][CCCC:^C4A]}
+
+{#TailB=[>][CCCC:^C1B][CC(C=C):^D2B][CCCC:^C3B][CCCC:^C4B]}
+
+|
+
+[^NC3]
+[^PO4]
+[^GL1]
+[^GL2]
+[#TailA]
+[#TailB]
+
+{#TailA=[>][^C1A][^D2A][^C3A][^C4A]}
+
+{#TailB=[>][^C1B][^D2B][^C3B][^C4B]}
+
+]
+
+|+|
+
+NaCl=CG|[
+[Na+:^Na][Cl-:^Cl]
+|
+[^Na][^Cl]
+]
+
+|+|
+
+W=CG|[
+[OOOO:^W]
+|
+[^W]
+]
