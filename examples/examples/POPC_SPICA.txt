@@ -1,0 +1,59 @@
+LiMBS1.0 ||
+
+rsln:CG ||
+
+lsc:1 ||
+
+uls:1 ||
+
+lls:1 ||
+
+{POPC:tails=16:0-18:1,head=PC,charge=0.0} ||
+
+leaflet:count{-u{POPC:147}-l{POPC:147}} ||
+
+type:planar ||
+
+box:[10.0,10.0,8.0]nm ||
+
+sol:W ||
+
+|++|
+
+POPC=CG|[
+
+[N(C)(C)(C)CC:^NC]
+[OP(=O)(O)(O):^PH]
+[CCC:^GL]
+[OC(=O):^EST1]
+[OC(=O):^EST2]
+[#TailA]
+[#TailB]
+
+{#TailA=[>][CCC:^C11][CCC:^C12][C(C=C):^C13][CCC:^C14][CCC:^C15][CC:^C16]}
+
+{#TailB=[>][CCC:^C21][CCC:^C22][CCC:^C23][CCC:^C24][CCC:^C25]}
+
+|
+
+[^NC]
+[^PH]
+[^GL]
+[^EST1]
+[^EST2]
+[#TailA]
+[#TailB]
+
+{#TailA=[>][^C11][^C12][^C13][^C14][^C15][^C16]}
+
+{#TailB=[>][^C21][^C22][^C23][^C24][^C25]}
+
+]
+
+|+|
+
+W=CG|[
+[OOO:^W]
+|
+[^W]
+]
