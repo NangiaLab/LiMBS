@@ -12,7 +12,6 @@ LiMBS employs a dual-block architecture consisting of a system-level descriptor 
 - Atomistic lipid notation
 - Coarse-grained lipid notation
 - Asymmetric membrane systems
-  
 ## Repository Structure
 
 ```text
