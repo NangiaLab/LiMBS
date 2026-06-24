@@ -1,0 +1,47 @@
+LiMBS1.0 ||
+
+rsln:AA ||
+
+lsc:2 ||
+
+uls:2 ||
+
+lls:2 ||
+
+{CHOL:tails=sterol,head=CHOL,charge=0.0;DOPC:tails=18:1-18:1,head=PC,charge=0.0} ||
+
+leaflet:count{-u{CHOL:16,DOPC:145}-l{CHOL:16,DOPC:145}} ||
+
+type:planar ||
+
+box:[10.0,10.0,8.0]nm ||
+
+sol:TIP3P ||
+
+salt:0.15M NaCl
+
+|++|
+
+CHOL=AA|[
+C[C@H](CCCC(C)C)[C@H]1CC[C@@H]2[C@@]1(CC[C@H]3[C@H]2CC=C4[C@@]3(CC[C@@H](C4)O)C)C
+]
+
+|+|
+
+DOPC=AA|[
+{#T18_1=CCCCCCCCC=CCCCCCCCC}
+
+[N](C)(C)(C)CCOP(=O)(O)OCCOC(=O)[#T18_1]COC(=O)[#T18_1]
+]
+
+|+|
+
+NaCl=AA|[
+[Na+][Cl-]
+]
+
+|+|
+
+TIP3P=AA|[
+[O]
+]
