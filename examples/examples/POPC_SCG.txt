@@ -26,9 +26,9 @@ POPC=SCG|[
 
 [N(C)(C)(C)CC:^NC3][OP(=O)(O)(O):^PO4][CCOC(=O):^GL1][COC(=O):^GL2][#TailA][#TailB]
 
-{#TailA=[>][CCCC:^C1A][CC(C=C):^D2A][CCCC:^C3A][CCCC:^C4A]}
+{#TailA=[>][CCCCC:^C1A][CC(C=C):^D2A][CCCC:^C3A][CCCC:^C4A]}
 
-{#TailB=[>][CCCC:^C1B][CCCC:^C2B][CCCC:^C3B][CCCC:^C4B]}
+{#TailB=[>][CCC:^C1B][CCCC:^C2B][CCCC:^C3B][CCCC:^C4B]}
 
 |
 
