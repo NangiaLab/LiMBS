@@ -25,7 +25,7 @@ salt:0.15M NaCl
 DOPC=AA|[
 {#T18_1=CCCCCCCCC=CCCCCCCC}
 
-[N](C)(C)(C)CCOP(=O)(O)OCCOC(=O)[#T18_1]COC(=O)[#T18_1]
+[N](C)(C)(C)CCOP(=O)(O)OCCO(=O)[#T18_1]CO(=O)[#T18_1]
 ]
 
 |+|
@@ -35,7 +35,7 @@ POPC=AA|[
 
 {#T18_1=CCCCCCCCC=CCCCCCCC}
 
-[N](C)(C)(C)CCOP(=O)(O)OCCOC(=O)[#T16]COC(=O)[#T18_1]
+[N](C)(C)(C)CCOP(=O)(O)OCCO(=O)[#T16]CO(=O)[#T18_1]
 ]
 
 |+|
