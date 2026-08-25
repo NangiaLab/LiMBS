@@ -30,7 +30,7 @@ parser/
 ## External tools:
   - insane.py or insane_peptoid_py3.py  (for planar membranes)
   - TS2CG executable in PATH            (for vesicles)
-  - 
+
 ## LiMBS Web Interface
 
 LiMBS line notation can be generated using the LiMBS web interface:
