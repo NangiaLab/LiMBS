@@ -23,15 +23,28 @@ The web application generates previews and files; it does not execute INSANE or 
 
 from __future__ import annotations
 
+import hmac
 import json
 import math
+import os
 import re
+import secrets
 import shlex
+from datetime import timedelta
 from html import escape
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
-from flask import Flask, abort, render_template, request, send_file, url_for
+from flask import (
+    Flask,
+    abort,
+    redirect,
+    render_template,
+    request,
+    send_file,
+    session,
+    url_for,
+)
 
 from lipid_registry import LIPIDS
 from cg_templates import generate_cg_block
@@ -77,6 +90,114 @@ except ImportError as exc:
 
 app = Flask(__name__)
 PROJECT_DIR = Path(__file__).resolve().parent
+
+
+# ============================================================================
+# Reviewer access protection
+# ============================================================================
+#
+# To enable password protection, define LIMBS_ACCESS_PASSWORD in the hosting
+# environment (for example, in Render -> Environment).
+#
+# The password is intentionally NOT stored in this source file.
+#
+# SECRET_KEY should also be defined in production so reviewer sessions survive
+# service restarts.  When it is absent, a temporary key is generated for local
+# development.
+#
+# Example Render environment variables:
+#
+#     LIMBS_ACCESS_PASSWORD = <reviewer password>
+#     SECRET_KEY            = <long random secret>
+#
+# When LIMBS_ACCESS_PASSWORD is not defined, access protection is disabled.
+# This keeps local development convenient while allowing the deployed reviewer
+# site to be protected through environment configuration.
+
+ACCESS_PASSWORD = os.environ.get("LIMBS_ACCESS_PASSWORD", "").strip()
+AUTH_ENABLED = bool(ACCESS_PASSWORD)
+
+app.secret_key = os.environ.get("SECRET_KEY") or secrets.token_hex(32)
+
+app.config.update(
+    SESSION_COOKIE_HTTPONLY=True,
+    SESSION_COOKIE_SAMESITE="Lax",
+    SESSION_COOKIE_SECURE=(
+        os.environ.get("RENDER", "").strip().lower() == "true"
+    ),
+    PERMANENT_SESSION_LIFETIME=timedelta(hours=12),
+)
+
+
+@app.before_request
+def require_reviewer_access():
+    """Require reviewer authentication when password protection is enabled."""
+
+    if not AUTH_ENABLED:
+        return None
+
+    public_endpoints = {
+        "reviewer_login",
+        "reviewer_logout",
+        "healthcheck",
+        "static",
+    }
+
+    if request.endpoint in public_endpoints:
+        return None
+
+    if session.get("limbs_reviewer_authenticated"):
+        return None
+
+    return redirect(url_for("reviewer_login"))
+
+
+@app.route("/login", methods=["GET", "POST"])
+def reviewer_login():
+    """Display and process the temporary reviewer-access login page."""
+
+    if not AUTH_ENABLED:
+        return redirect(url_for("home"))
+
+    if session.get("limbs_reviewer_authenticated"):
+        return redirect(url_for("home"))
+
+    error = None
+
+    if request.method == "POST":
+        submitted_password = request.form.get("password", "")
+
+        if hmac.compare_digest(submitted_password, ACCESS_PASSWORD):
+            session.clear()
+            session["limbs_reviewer_authenticated"] = True
+            session.permanent = True
+            return redirect(url_for("home"))
+
+        error = "Incorrect access password."
+
+    return render_template(
+        "login.html",
+        error=error,
+    )
+
+
+@app.route("/logout")
+def reviewer_logout():
+    """End the current reviewer session."""
+
+    session.clear()
+
+    if AUTH_ENABLED:
+        return redirect(url_for("reviewer_login"))
+
+    return redirect(url_for("home"))
+
+
+@app.route("/health")
+def healthcheck():
+    """Unauthenticated health endpoint for hosting-platform health checks."""
+
+    return "OK", 200
 
 
 # General helpers

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LiMBS Access</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            font-family: Arial, Helvetica, sans-serif;
+            color: #222;
+            background: #f5f7fa;
+        }
+
+        .access-card {
+            width: 100%;
+            max-width: 430px;
+            padding: 34px;
+            background: #ffffff;
+            border: 1px solid #dcdfe4;
+            border-radius: 10px;
+            box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08);
+        }
+
+        h1 {
+            margin: 0 0 8px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            margin: 0 0 24px;
+            color: #555;
+            line-height: 1.5;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 7px;
+            font-weight: 600;
+        }
+
+        input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #b9bec7;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 16px;
+            padding: 12px 16px;
+            border: 0;
+            border-radius: 6px;
+            background: #1a5fb4;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #174f94;
+        }
+
+        .error {
+            margin-bottom: 16px;
+            padding: 10px 12px;
+            border-left: 4px solid #b42318;
+            background: #fff5f4;
+            color: #8f1d14;
+        }
+
+        .note {
+            margin-top: 20px;
+            color: #666;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+
+<body>
+    <main class="access-card">
+        <h1>LiMBS</h1>
+
+        <p class="subtitle">
+            Temporary access. Enter the access password to continue.
+        </p>
+
+        {% if error %}
+        <div class="error">{{ error }}</div>
+        {% endif %}
+
+        <form method="POST" action="{{ url_for('reviewer_login') }}">
+            <label for="password">Access password</label>
+
+            <input
+                id="password"
+                name="password"
+                type="password"
+                autocomplete="current-password"
+                required
+                autofocus
+            >
+
+            <button type="submit">Enter LiMBS</button>
+        </form>
+
+        <p class="note">
+            Access to this site is currently restricted.
+        </p>
+    </main>
+</body>
+</html>
