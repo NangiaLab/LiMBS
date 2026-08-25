@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <title>LiMBS Lipid Library</title>
+
+    <style>
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            line-height: 1.5;
+            background-color: #ffffff;
+            color: #222222;
+        }
+
+        h1 {
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            color: #555555;
+            margin-bottom: 30px;
+        }
+
+        .navigation {
+            margin-bottom: 30px;
+        }
+
+        .navigation a {
+            margin-right: 20px;
+            color: #1a5fb4;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .navigation a:hover {
+            text-decoration: underline;
+        }
+
+        .controls {
+            margin-bottom: 20px;
+        }
+
+        #searchInput {
+            padding: 10px;
+            width: 300px;
+            font-size: 15px;
+            margin-right: 10px;
+        }
+
+        #classFilter {
+            padding: 10px;
+            font-size: 15px;
+        }
+
+        .lipid-count {
+            margin-top: 10px;
+            margin-bottom: 15px;
+            color: #555555;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            max-width: 1000px;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+
+        th, td {
+            border: 1px solid #cccccc;
+            padding: 10px;
+            text-align: left;
+        }
+
+        tbody tr:hover {
+            background-color: #f8f8f8;
+        }
+
+        .lipid-name {
+            font-weight: bold;
+        }
+
+        .neutral {
+            color: #333333;
+        }
+
+        .negative {
+            color: #a33a3a;
+        }
+
+        .footer-note {
+            margin-top: 30px;
+            padding: 15px;
+            background-color: #f7f7f7;
+            border-left: 4px solid #4a90e2;
+            max-width: 970px;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<h1>LiMBS Lipid Library</h1>
+
+<p class="subtitle">
+    Predefined lipid components supported by the LiMBS1.0 reference implementation.
+</p>
+
+
+<div class="navigation">
+
+    <a href="/">LiMBS Generator</a>
+
+    <a href="/lipids">Lipid Library</a>
+
+</div>
+
+
+<!-- Search and filter controls -->
+
+<div class="controls">
+
+    <input
+        type="text"
+        id="searchInput"
+        placeholder="Search lipid, class, or chain..."
+        onkeyup="filterLipids()"
+    >
+
+    <select
+        id="classFilter"
+        onchange="filterLipids()"
+    >
+
+        <option value="all">All lipid classes</option>
+
+        <option value="PA">PA</option>
+
+        <option value="PC">PC</option>
+
+        <option value="PE">PE</option>
+
+        <option value="PS">PS</option>
+
+        <option value="PI">PI</option>
+
+        <option value="PG">PG</option>
+
+        <option value="DG">DG</option>
+
+        <option value="SM">SM</option>
+
+        <option value="CE">Ceramide</option>
+
+        <option value="STEROL">Sterol</option>
+
+    </select>
+
+</div>
+
+
+<div class="lipid-count">
+
+    Showing
+    <span id="visibleCount">{{ lipids|length }}</span>
+    of
+    {{ lipids|length }}
+    predefined lipids
+
+</div>
+
+
+<!-- Lipid table -->
+
+<table id="lipidTable">
+
+    <thead>
+
+        <tr>
+
+            <th>Lipid</th>
+
+            <th>Class</th>
+
+            <th>Tail A</th>
+
+            <th>Tail B</th>
+
+            <th>Charge</th>
+
+        </tr>
+
+    </thead>
+
+
+    <tbody>
+
+        {% for name, lipid in lipids.items() %}
+
+        <tr
+            data-name="{{ name }}"
+            data-class="{{ lipid['class'] }}"
+        >
+
+            <!-- Lipid name -->
+
+            <td class="lipid-name">
+
+                {{ name }}
+
+            </td>
+
+
+            <!-- Lipid class -->
+
+            <td>
+
+                {{ lipid["class"] }}
+
+            </td>
+
+
+            <!-- Tail A -->
+
+            <td>
+
+                {% if lipid["tail_a"] %}
+
+                    {{ lipid["tail_a"][0] }}:{{ lipid["tail_a"][1] }}
+
+                {% else %}
+
+                    —
+
+                {% endif %}
+
+            </td>
+
+
+            <!-- Tail B -->
+
+            <td>
+
+                {% if lipid["tail_b"] %}
+
+                    {{ lipid["tail_b"][0] }}:{{ lipid["tail_b"][1] }}
+
+                {% else %}
+
+                    —
+
+                {% endif %}
+
+            </td>
+
+
+            <!-- Charge -->
+
+            <td>
+
+                {% if lipid["charge"] < 0 %}
+
+                    <span class="negative">
+                        {{ lipid["charge"] }}
+                    </span>
+
+                {% else %}
+
+                    <span class="neutral">
+                        {{ lipid["charge"] }}
+                    </span>
+
+                {% endif %}
+
+            </td>
+
+
+        </tr>
+
+        {% endfor %}
+
+    </tbody>
+
+</table>
+
+
+<div class="footer-note">
+
+    <strong>LiMBS1.0 predefined lipid registry</strong>
+
+    <p>
+        Lipid metadata shown here are obtained directly from the
+        LiMBS lipid registry used by the reference implementation.
+    </p>
+
+</div>
+
+
+<script>
+
+function filterLipids() {
+
+    const search =
+        document
+        .getElementById("searchInput")
+        .value
+        .toLowerCase();
+
+    const selectedClass =
+        document
+        .getElementById("classFilter")
+        .value;
+
+    const table =
+        document
+        .getElementById("lipidTable");
+
+    const rows =
+        table
+        .getElementsByTagName("tbody")[0]
+        .getElementsByTagName("tr");
+
+
+    let visible = 0;
+
+
+    for (let i = 0; i < rows.length; i++) {
+
+        const row = rows[i];
+
+        const rowText =
+            row.innerText.toLowerCase();
+
+        const lipidClass =
+            row.dataset.class;
+
+
+        const matchesSearch =
+            rowText.includes(search);
+
+
+        const matchesClass =
+            selectedClass === "all" ||
+            lipidClass === selectedClass;
+
+
+        if (matchesSearch && matchesClass) {
+
+            row.style.display = "";
+
+            visible++;
+
+        }
+
+        else {
+
+            row.style.display = "none";
+
+        }
+
+    }
+
+
+    document
+        .getElementById("visibleCount")
+        .textContent = visible;
+
+}
+
+</script>
+
+
+</body>
+
+</html>

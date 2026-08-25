@@ -1,0 +1,1385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LiMBS1.0 Membrane Specification Generator</title>
+
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            margin: 0;
+            background: #ffffff;
+            color: #222222;
+            line-height: 1.5;
+        }
+
+        .navbar {
+            background: #f5f5f5;
+            border-bottom: 1px solid #dddddd;
+            padding: 14px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .brand {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .nav-links a {
+            margin-left: 22px;
+            color: #1a5fb4;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .nav-links a:hover { text-decoration: underline; }
+
+        .container {
+            max-width: 1250px;
+            margin: 35px auto;
+            padding: 0 25px 50px;
+        }
+
+        h1 { margin-bottom: 6px; }
+        h3 { margin-top: 0; margin-bottom: 14px; }
+        h4 { margin: 22px 0 12px; }
+
+        .subtitle {
+            color: #555555;
+            margin-bottom: 30px;
+            max-width: 930px;
+        }
+
+        .section {
+            border: 1px solid #dddddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 22px;
+            background: #ffffff;
+        }
+
+        .section-description {
+            color: #555555;
+            margin-top: -5px;
+            margin-bottom: 18px;
+            font-size: 14px;
+            max-width: 950px;
+        }
+
+        .info-box,
+        .warning-box {
+            padding: 12px 15px;
+            margin-top: 15px;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .info-box {
+            background: #f7fbff;
+            border-left: 4px solid #4a90e2;
+        }
+
+        .warning-box {
+            background: #fffde7;
+            border-left: 4px solid #e0a800;
+        }
+
+        label { font-weight: 600; }
+
+        select,
+        input[type="number"],
+        input[type="text"] {
+            padding: 8px 9px;
+            border: 1px solid #bbbbbb;
+            border-radius: 4px;
+            font-size: 14px;
+            background: #ffffff;
+        }
+
+        select { min-width: 250px; }
+
+        .form-row {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+        }
+
+        .form-row > label:first-child {
+            min-width: 220px;
+        }
+
+        .small-input { width: 130px; }
+        .medium-input { width: 180px; }
+        .unit { color: #555555; }
+
+        .help-text {
+            color: #666666;
+            font-size: 13px;
+            margin-top: 5px;
+        }
+
+        .choice-group {
+            display: flex;
+            flex-direction: column;
+            gap: 9px;
+            margin: 8px 0 14px;
+        }
+
+        .choice-line {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .choice-line input {
+            margin-top: 4px;
+        }
+
+        .choice-line label {
+            font-weight: 500;
+        }
+
+        .subpanel {
+            border: 1px solid #e2e2e2;
+            border-radius: 6px;
+            padding: 15px;
+            margin-top: 12px;
+            background: #fafafa;
+        }
+
+        .lipid-search-box { margin-bottom: 15px; }
+
+        .lipid-search-box input {
+            width: 350px;
+            max-width: 100%;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            max-height: 600px;
+            overflow-y: auto;
+            border: 1px solid #cccccc;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            position: sticky;
+            top: 0;
+            background: #f3f3f3;
+            z-index: 2;
+        }
+
+        th, td {
+            border-bottom: 1px solid #dddddd;
+            padding: 10px 12px;
+            text-align: center;
+        }
+
+        th:first-child,
+        td:first-child { text-align: left; }
+
+        td:first-child { font-weight: 700; }
+
+        .lipid-input { width: 140px; }
+
+        .dimension-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            max-width: 850px;
+            margin-top: 15px;
+        }
+
+        .dimension-item label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .dimension-item input,
+        .dimension-item select {
+            width: 100%;
+            min-width: 0;
+        }
+
+        .builder-card {
+            border: 1px solid #d8e6f5;
+            border-radius: 7px;
+            padding: 16px;
+            background: #f7fbff;
+        }
+
+        .download-link {
+            display: inline-block;
+            margin-top: 8px;
+            padding: 9px 14px;
+            border-radius: 5px;
+            background: #1a5fb4;
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .download-link:hover { background: #154c8c; }
+
+        .submit-area {
+            margin-top: 30px;
+            margin-bottom: 30px;
+        }
+
+        .submit-button {
+            background: #1a5fb4;
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+            padding: 12px 22px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .submit-button:hover { background: #154c8c; }
+
+        .hidden { display: none !important; }
+
+        .muted { color: #666666; }
+
+        @media (max-width: 700px) {
+            .navbar { padding: 12px 18px; }
+            .nav-links a { margin-left: 10px; }
+            .container {
+                margin-top: 20px;
+                padding: 0 15px 35px;
+            }
+            .form-row { display: block; }
+            .form-row > label:first-child {
+                display: block;
+                margin-bottom: 5px;
+            }
+            select { width: 100%; }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="navbar">
+    <div class="brand">LiMBS1.0</div>
+    <div class="nav-links">
+        <a href="/">Build</a>
+        <a href="/lipids">Lipid Library</a>
+    </div>
+</div>
+
+<div class="container">
+
+    <h1>LiMBS1.0 Membrane Specification Generator</h1>
+
+    <p class="subtitle">
+        Create a standardized LiMBS1.0 description of a membrane system.
+        Select the molecular resolution, membrane geometry, leaflet composition,
+        system dimensions, solvent, and ionic conditions. For supported
+        coarse-grained systems, LiMBS will show the appropriate construction
+        interface automatically.
+    </p>
+
+    <form action="/generate" method="post" id="limbsForm">
+
+        <!-- 1. Molecular Resolution -->
+        <div class="section">
+            <h3>1. Molecular Resolution</h3>
+            <p class="section-description">
+                Select the molecular representation used for the LiMBS species definitions.
+            </p>
+
+            <div class="form-row">
+                <label for="resolution">Resolution</label>
+                <select name="resolution" id="resolution" onchange="updateResolution()">
+                    <option value="AA">AA — Atomistic</option>
+                    <option value="CG" selected>CG — Coarse-grained</option>
+                    <option value="SCG">SCG — Super coarse-grained</option>
+                </select>
+            </div>
+
+            <div class="info-box" id="resolutionInfo"></div>
+        </div>
+
+        <!-- 2. Membrane Geometry -->
+        <div class="section">
+            <h3>2. Membrane Geometry</h3>
+            <p class="section-description">
+                Select a planar membrane or vesicle.
+            </p>
+
+            <div class="form-row">
+                <label for="membraneType">Geometry</label>
+                <select name="type" id="membraneType" onchange="updateGeometry()">
+                    <option value="planar" selected>Planar membrane</option>
+                    <option value="vesicle">Vesicle</option>
+                </select>
+            </div>
+
+            <div class="info-box" id="geometryInfo"></div>
+        </div>
+
+        <!-- 3. Leaflet Composition Mode -->
+        <div class="section">
+            <h3>3. Leaflet Composition Mode</h3>
+            <p class="section-description">
+                Count mode records absolute molecule numbers. Ratio mode records
+                relative leaflet composition.
+            </p>
+
+            <div class="form-row">
+                <label for="leafletMode">Composition mode</label>
+                <select name="leaflet_mode" id="leafletMode" onchange="updateLeafletMode()">
+                    <option value="count" selected>Count — absolute molecule numbers</option>
+                    <option value="ratio">Ratio — relative composition</option>
+                </select>
+            </div>
+
+            <div class="info-box" id="leafletModeInfo"></div>
+
+            <div class="warning-box hidden" id="ratioReminder">
+                In ratio mode, decimal values such as <strong>0.20</strong> and
+                <strong>0.80</strong> are allowed. Upper/outer and lower/inner
+                leaflet compositions are entered independently.
+            </div>
+        </div>
+
+        <!-- 4. Lipid Composition -->
+        <div class="section">
+            <h3>4. Lipid Composition</h3>
+
+            <p class="section-description">
+                Enter a non-zero value for each lipid present in the membrane.
+                Zero-valued lipids are omitted from the generated LiMBS specification.
+            </p>
+
+            <div class="lipid-search-box">
+                <label for="lipidSearch">Search lipid:</label><br>
+                <input
+                    type="text"
+                    id="lipidSearch"
+                    placeholder="Search by lipid name or class, e.g. POPC, PE, CHOL"
+                    oninput="filterLipids()"
+                >
+            </div>
+
+            <div class="info-box" id="compositionInfo">
+                Enter lipid values for both leaflets. Section 5 will use the selected
+                composition when a LiMBS-assisted planar APL estimate is requested.
+            </div>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Lipid</th>
+                            <th>Class</th>
+                            <th id="upperHeader">Upper Leaflet</th>
+                            <th id="lowerHeader">Lower Leaflet</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for lipid, data in lipids.items() %}
+                        <tr
+                            class="lipid-row"
+                            data-name="{{ lipid }}"
+                            data-class="{{ data['class'] }}"
+                        >
+                            <td>{{ lipid }}</td>
+                            <td>{{ data['class'] }}</td>
+                            <td>
+                                <input
+                                    type="number"
+                                    name="{{ lipid }}_upper"
+                                    data-lipid="{{ lipid }}"
+                                    value="0"
+                                    min="0"
+                                    step="1"
+                                    class="lipid-input leaflet-value upper-value"
+                                    aria-label="{{ lipid }} upper or outer leaflet value"
+                                    oninput="updateAplAvailability()"
+                                >
+                            </td>
+                            <td>
+                                <input
+                                    type="number"
+                                    name="{{ lipid }}_lower"
+                                    data-lipid="{{ lipid }}"
+                                    value="0"
+                                    min="0"
+                                    step="1"
+                                    class="lipid-input leaflet-value lower-value"
+                                    aria-label="{{ lipid }} lower or inner leaflet value"
+                                    oninput="updateAplAvailability()"
+                                >
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 5. System Dimensions -->
+        <div class="section">
+            <h3>5. System Dimensions</h3>
+
+            <p class="section-description">
+                Enter the simulation box manually or use an assisted starting estimate.
+                Estimated dimensions are construction values and should not be interpreted
+                as equilibrium membrane properties.
+            </p>
+
+            <div class="form-row">
+                <label for="boxMode">Dimension method</label>
+                <select name="box_mode" id="boxMode" onchange="updateBoxMode()">
+                    <option value="manual" selected>Manual dimensions</option>
+                    <option value="estimate">Assisted estimate</option>
+                </select>
+            </div>
+
+            <!-- Manual dimensions -->
+            <div id="manualBoxSection">
+                <div class="dimension-grid">
+                    <div class="dimension-item">
+                        <label for="boxX">X dimension</label>
+                        <input type="number" name="box_x" id="boxX"
+                               value="10.0" min="0.001" step="0.001">
+                        <div class="help-text">nm</div>
+                    </div>
+
+                    <div class="dimension-item">
+                        <label for="boxY">Y dimension</label>
+                        <input type="number" name="box_y" id="boxY"
+                               value="10.0" min="0.001" step="0.001">
+                        <div class="help-text">nm</div>
+                    </div>
+
+                    <div class="dimension-item">
+                        <label for="boxZ">Z dimension</label>
+                        <input type="number" name="box_z" id="boxZ"
+                               value="8.0" min="0.001" step="0.001">
+                        <div class="help-text">nm</div>
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    For planar count-mode membranes, LiMBS will report the
+                    upper- and lower-leaflet APL implied by the manually supplied
+                    X and Y dimensions.
+                </div>
+            </div>
+
+            <!-- Assisted planar dimensions -->
+            <div id="planarEstimateSection" class="hidden">
+                <h4>Planar Membrane Estimate</h4>
+
+                <div class="form-row">
+                    <label for="planarShape">Box shape</label>
+                    <select name="planar_shape" id="planarShape" onchange="updatePlanarShape()">
+                        <option value="square" selected>Square lateral (X = Y, Z independent)</option>
+                        <option value="rectangular">Rectangular (X ≠ Y, Z independent)</option>
+                        <option value="cubic">Cubic (X = Y = Z)</option>
+                    </select>
+                </div>
+
+                <div class="form-row hidden" id="aspectRatioRow">
+                    <label for="xyAspectRatio">X:Y aspect ratio</label>
+                    <input
+                        type="number"
+                        name="xy_aspect_ratio"
+                        id="xyAspectRatio"
+                        class="small-input"
+                        value="1.5"
+                        min="0.001"
+                        step="0.01"
+                    >
+                </div>
+
+                <h4>Area per lipid</h4>
+
+                <div class="choice-group">
+                    <div class="choice-line">
+                        <input
+                            type="radio"
+                            name="apl_source"
+                            id="aplSourceLimbs"
+                            value="limbs"
+                            checked
+                            onchange="updateAplSource()"
+                            {% if not apl_reference_available %}disabled{% endif %}
+                        >
+                        <label for="aplSourceLimbs">
+                            Use LiMBS reference / composition-weighted starting estimate
+                        </label>
+                    </div>
+
+                    <div class="choice-line">
+                        <input
+                            type="radio"
+                            name="apl_source"
+                            id="aplSourceCustom"
+                            value="custom"
+                            onchange="updateAplSource()"
+                            {% if not apl_reference_available %}checked{% endif %}
+                        >
+                        <label for="aplSourceCustom">
+                            Enter my own APL
+                        </label>
+                    </div>
+                </div>
+
+                <div
+                    id="aplUnavailableWarning"
+                    class="warning-box hidden"
+                    role="status"
+                    aria-live="polite"
+                ></div>
+
+                <div class="subpanel" id="limbsAplPanel">
+                    <div id="aplCompositionHint" class="help-text"></div>
+
+                    <div class="form-row">
+                        <label for="temperatureK">Reference temperature</label>
+                        <input
+                            type="number"
+                            name="temperature_k"
+                            id="temperatureK"
+                            class="small-input"
+                            min="0.001"
+                            step="0.01"
+                            placeholder="optional"
+                        >
+                        <span class="unit">K</span>
+                    </div>
+
+                    <div class="help-text">
+                        Optional. If entered, LiMBS selects the closest suitable
+                        curated reference temperature available for the selected model.
+                    </div>
+
+                    {% if not apl_reference_available %}
+                    <div class="warning-box">
+                        The curated APL reference module is not available in this
+                        installation. Enter a user-specified APL instead.
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="subpanel hidden" id="customAplPanel">
+                    <div class="form-row">
+                        <label for="customApl">Custom APL</label>
+                        <input
+                            type="number"
+                            name="custom_apl"
+                            id="customApl"
+                            class="small-input"
+                            value="0.65"
+                            min="0.001"
+                            step="0.001"
+                        >
+                        <span class="unit">nm²/lipid</span>
+                    </div>
+
+                    <div class="choice-line">
+                        <input
+                            type="checkbox"
+                            id="separateLeafletApl"
+                            onchange="updateSeparateLeafletApl()"
+                        >
+                        <label for="separateLeafletApl">
+                            Use different APL values for the two leaflets
+                        </label>
+                    </div>
+
+                    <div class="dimension-grid hidden" id="leafletAplGrid">
+                        <div class="dimension-item">
+                            <label for="customAplUpper" id="customAplUpperLabel">
+                                Upper leaflet APL
+                            </label>
+                            <input
+                                type="number"
+                                name="custom_apl_upper"
+                                id="customAplUpper"
+                                min="0.001"
+                                step="0.001"
+                                value="0.65"
+                            >
+                            <div class="help-text">nm²/lipid</div>
+                        </div>
+
+                        <div class="dimension-item">
+                            <label for="customAplLower" id="customAplLowerLabel">
+                                Lower leaflet APL
+                            </label>
+                            <input
+                                type="number"
+                                name="custom_apl_lower"
+                                id="customAplLower"
+                                min="0.001"
+                                step="0.001"
+                                value="0.65"
+                            >
+                            <div class="help-text">nm²/lipid</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-row hidden" id="targetLipidsSection">
+                    <label for="targetLipids">Target lipids per leaflet</label>
+                    <input
+                        type="number"
+                        name="target_lipids_per_leaflet"
+                        id="targetLipids"
+                        class="small-input"
+                        value="100"
+                        min="1"
+                        step="1"
+                    >
+                    <span class="help-text">
+                        Needed for a ratio-mode assisted box estimate because ratios
+                        alone do not define the absolute membrane size.
+                    </span>
+                </div>
+
+                <div class="form-row" id="estimatedPlanarZRow">
+                    <label for="estimatedPlanarZ">Z dimension</label>
+                    <input
+                        type="number"
+                        name="estimated_planar_z"
+                        id="estimatedPlanarZ"
+                        class="small-input"
+                        value="8.0"
+                        min="0.001"
+                        step="0.001"
+                    >
+                    <span class="unit">nm</span>
+                </div>
+
+                <div class="info-box hidden" id="cubicBoxNote">
+                    Cubic mode sets <strong>X = Y = Z</strong>. The side length is
+                    calculated from the assisted lateral-area estimate, so there is
+                    no separate Z input. Verify that the resulting Z dimension gives
+                    sufficient solvent separation across the membrane normal.
+                </div>
+
+                <div class="warning-box">
+                    LiMBS APL values are reference construction aids. For a mixed
+                    leaflet, the assisted value is a composition-weighted approximation
+                    derived from suitable pure-lipid references. It is not an equilibrium
+                    APL for the mixed membrane. If a suitable reference is unavailable
+                    for any component, use your own APL. In cubic mode, the calculated
+                    lateral side is also used as Z.
+                </div>
+            </div>
+
+            <!-- Assisted vesicle dimensions -->
+            <div id="vesicleEstimateSection" class="hidden">
+                <h4>Vesicle Box Estimate</h4>
+
+                <div class="dimension-grid">
+                    <div class="dimension-item">
+                        <label for="vesicleDiameter">Vesicle diameter</label>
+                        <input
+                            type="number"
+                            name="vesicle_diameter"
+                            id="vesicleDiameter"
+                            value="20.0"
+                            min="0.001"
+                            step="0.001"
+                        >
+                        <div class="help-text">nm</div>
+                    </div>
+
+                    <div class="dimension-item">
+                        <label for="vesiclePadding">Solvent padding per side</label>
+                        <input
+                            type="number"
+                            name="vesicle_padding"
+                            id="vesiclePadding"
+                            value="3.0"
+                            min="0"
+                            step="0.001"
+                        >
+                        <div class="help-text">nm</div>
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    The assisted vesicle box uses:
+                    <strong>box length = vesicle diameter + 2 × solvent padding</strong>.
+                    TS2CG surface geometry and rescaling remain downstream construction settings.
+                </div>
+            </div>
+        </div>
+
+        <!-- 6. Solvent -->
+        <div class="section">
+            <h3>6. Solvent / Water Model</h3>
+
+            <p class="section-description">
+                Available solvent choices depend on the selected molecular resolution.
+            </p>
+
+            <div class="form-row">
+                <label for="solvent">Solvent</label>
+                <select name="sol" id="solvent" onchange="updateCustomSolvent()"></select>
+            </div>
+
+            <div class="form-row hidden" id="customSolventSection">
+                <label for="customSolvent">Custom solvent identifier</label>
+                <input
+                    type="text"
+                    name="custom_solvent"
+                    id="customSolvent"
+                    class="medium-input"
+                    placeholder="e.g. OPC"
+                >
+            </div>
+
+            <div class="info-box" id="solventInfo"></div>
+        </div>
+
+        <!-- 7. Ionic Conditions -->
+        <div class="section">
+            <h3>7. Ionic Conditions</h3>
+
+            <div class="form-row">
+                <label for="saltConc">Salt concentration</label>
+                <input
+                    type="number"
+                    name="salt_conc"
+                    id="saltConc"
+                    class="small-input"
+                    value="0.15"
+                    min="0"
+                    step="0.01"
+                >
+                <span class="unit">M</span>
+            </div>
+
+            <div class="form-row">
+                <label for="saltIon">Salt</label>
+                <select name="salt_ion" id="saltIon">
+                    <option value="NaCl" selected>NaCl</option>
+                    <option value="KCl">KCl</option>
+                    <option value="CaCl2">CaCl₂</option>
+                    <option value="MgCl2">MgCl₂</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- 8. Construction Tool: visible only for CG -->
+        <div class="section hidden" id="constructionToolSection">
+            <h3>8. Construction Tool</h3>
+
+            <p class="section-description">
+                LiMBS selects the currently supported construction interface from
+                the chosen coarse-grained geometry. You do not need to choose a builder manually.
+            </p>
+
+            <div class="builder-card">
+                <div id="constructionToolText"></div>
+                <a
+                    id="builderDownloadLink"
+                    class="download-link"
+                    href="#"
+                >
+                    Download interface script
+                </a>
+            </div>
+        </div>
+
+        <div class="submit-area">
+            <button type="submit" class="submit-button">
+                Generate LiMBS1.0 Specification
+            </button>
+        </div>
+
+    </form>
+</div>
+
+<script>
+const APL_LIBRARY_AVAILABLE = {{ 'true' if apl_reference_available else 'false' }};
+const APL_AVAILABILITY = {{ apl_availability | tojson }};
+
+function addSolventOption(selectElement, value, label) {
+    const option = document.createElement("option");
+    option.value = value;
+    option.textContent = label;
+    selectElement.appendChild(option);
+}
+
+function updateResolution() {
+    const resolution = document.getElementById("resolution").value;
+    const solvent = document.getElementById("solvent");
+    const resolutionInfo = document.getElementById("resolutionInfo");
+    const currentSolvent = solvent.value;
+
+    solvent.innerHTML = "";
+
+    if (resolution === "AA") {
+        addSolventOption(solvent, "TIP3P", "TIP3P");
+        addSolventOption(solvent, "TIP4P", "TIP4P");
+        addSolventOption(solvent, "SPC", "SPC");
+        addSolventOption(solvent, "SPCE", "SPC/E");
+        addSolventOption(solvent, "OTHER", "Other");
+
+        resolutionInfo.innerHTML =
+            "<strong>AA:</strong> Atomistic molecular representation. " +
+            "LiMBS generates verified AA species definitions where a template is available.";
+    }
+    else if (resolution === "CG") {
+        addSolventOption(solvent, "W", "W");
+
+        resolutionInfo.innerHTML =
+            "<strong>CG:</strong> Coarse-grained molecular representation. " +
+            "LiMBS uses the supported CG template library for species generation.";
+    }
+    else {
+        addSolventOption(solvent, "WW", "WW");
+
+        resolutionInfo.innerHTML =
+            "<strong>SCG:</strong> Super coarse-grained molecular representation.";
+    }
+
+    const availableValues = Array.from(solvent.options).map(o => o.value);
+    if (availableValues.includes(currentSolvent)) {
+        solvent.value = currentSolvent;
+    }
+
+    updateCustomSolvent();
+    updateAplAvailability();
+    updateConstructionTool();
+}
+
+function updateCustomSolvent() {
+    const solvent = document.getElementById("solvent").value;
+    const resolution = document.getElementById("resolution").value;
+    const customSection = document.getElementById("customSolventSection");
+    const customInput = document.getElementById("customSolvent");
+    const solventInfo = document.getElementById("solventInfo");
+
+    if (solvent === "OTHER") {
+        customSection.classList.remove("hidden");
+        customInput.disabled = false;
+        solventInfo.innerHTML =
+            "Enter a custom AA solvent identifier. The parser may issue a warning " +
+            "if the identifier is not one of its recognized AA water models.";
+        return;
+    }
+
+    customSection.classList.add("hidden");
+    customInput.disabled = true;
+
+    if (resolution === "AA") {
+        solventInfo.innerHTML =
+            "AA systems may use recognized atomistic water models such as TIP3P, TIP4P, SPC, or SPC/E.";
+    }
+    else if (resolution === "CG") {
+        solventInfo.innerHTML =
+            "The current CG LiMBS implementation uses W as the coarse-grained water representation.";
+    }
+    else {
+        solventInfo.innerHTML =
+            "The current SCG LiMBS implementation uses WW as the super coarse-grained water representation.";
+    }
+}
+
+function updateGeometry() {
+    const geometry = document.getElementById("membraneType").value;
+    const geometryInfo = document.getElementById("geometryInfo");
+
+    if (geometry === "planar") {
+        geometryInfo.innerHTML =
+            "<strong>Planar:</strong> The two monolayers are reported as upper and lower leaflets.";
+    }
+    else {
+        geometryInfo.innerHTML =
+            "<strong>Vesicle:</strong> The two monolayers are reported as outer and inner leaflets.";
+    }
+
+    updateLeafletHeaders();
+    updateBoxEstimator();
+    updateAplAvailability();
+    updateConstructionTool();
+}
+
+function updateLeafletHeaders() {
+    const geometry = document.getElementById("membraneType").value;
+    const upperHeader = document.getElementById("upperHeader");
+    const lowerHeader = document.getElementById("lowerHeader");
+    const upperAplLabel = document.getElementById("customAplUpperLabel");
+    const lowerAplLabel = document.getElementById("customAplLowerLabel");
+
+    if (geometry === "vesicle") {
+        upperHeader.textContent = "Outer Leaflet";
+        lowerHeader.textContent = "Inner Leaflet";
+        upperAplLabel.textContent = "Outer leaflet APL";
+        lowerAplLabel.textContent = "Inner leaflet APL";
+    }
+    else {
+        upperHeader.textContent = "Upper Leaflet";
+        lowerHeader.textContent = "Lower Leaflet";
+        upperAplLabel.textContent = "Upper leaflet APL";
+        lowerAplLabel.textContent = "Lower leaflet APL";
+    }
+}
+
+function updateLeafletMode() {
+    const mode = document.getElementById("leafletMode").value;
+    const inputs = document.querySelectorAll(".leaflet-value");
+    const modeInfo = document.getElementById("leafletModeInfo");
+    const ratioReminder = document.getElementById("ratioReminder");
+
+    inputs.forEach(function(input) {
+        if (mode === "count") {
+            input.step = "1";
+            input.min = "0";
+            input.removeAttribute("max");
+        }
+        else {
+            input.step = "0.001";
+            input.min = "0";
+            input.max = "1";
+        }
+    });
+
+    if (mode === "count") {
+        modeInfo.innerHTML =
+            "<strong>Count mode:</strong> Enter absolute non-negative integer molecule counts.";
+        ratioReminder.classList.add("hidden");
+    }
+    else {
+        modeInfo.innerHTML =
+            "<strong>Ratio mode:</strong> Enter relative composition values. " +
+            "The values are preserved as supplied by LiMBS.";
+        ratioReminder.classList.remove("hidden");
+    }
+
+    updateRatioSizeInput();
+    updateAplAvailability();
+    updateConstructionTool();
+}
+
+function filterLipids() {
+    const query = document.getElementById("lipidSearch").value.trim().toUpperCase();
+    const rows = document.querySelectorAll(".lipid-row");
+
+    rows.forEach(function(row) {
+        const lipidName = row.dataset.name.toUpperCase();
+        const lipidClass = row.dataset.class.toUpperCase();
+        const matches = lipidName.includes(query) || lipidClass.includes(query);
+        row.style.display = matches ? "" : "none";
+    });
+}
+
+function updateBoxMode() {
+    const boxMode = document.getElementById("boxMode").value;
+    const manualSection = document.getElementById("manualBoxSection");
+
+    if (boxMode === "manual") {
+        manualSection.classList.remove("hidden");
+    }
+    else {
+        manualSection.classList.add("hidden");
+    }
+
+    setManualInputsDisabled(boxMode !== "manual");
+    updateBoxEstimator();
+}
+
+function setManualInputsDisabled(disabled) {
+    ["boxX", "boxY", "boxZ"].forEach(function(id) {
+        document.getElementById(id).disabled = disabled;
+    });
+}
+
+function updateBoxEstimator() {
+    const boxMode = document.getElementById("boxMode").value;
+    const geometry = document.getElementById("membraneType").value;
+    const planarSection = document.getElementById("planarEstimateSection");
+    const vesicleSection = document.getElementById("vesicleEstimateSection");
+
+    if (boxMode !== "estimate") {
+        planarSection.classList.add("hidden");
+        vesicleSection.classList.add("hidden");
+        setPlanarEstimatorDisabled(true);
+        setVesicleEstimatorDisabled(true);
+        return;
+    }
+
+    if (geometry === "planar") {
+        planarSection.classList.remove("hidden");
+        vesicleSection.classList.add("hidden");
+        setPlanarEstimatorDisabled(false);
+        setVesicleEstimatorDisabled(true);
+    }
+    else {
+        planarSection.classList.add("hidden");
+        vesicleSection.classList.remove("hidden");
+        setPlanarEstimatorDisabled(true);
+        setVesicleEstimatorDisabled(false);
+    }
+
+    updatePlanarShape();
+    updateAplAvailability();
+    updateRatioSizeInput();
+}
+
+function setPlanarEstimatorDisabled(disabled) {
+    const ids = [
+        "planarShape",
+        "xyAspectRatio",
+        "temperatureK",
+        "aplSourceLimbs",
+        "aplSourceCustom",
+        "customApl",
+        "customAplUpper",
+        "customAplLower",
+        "targetLipids",
+        "estimatedPlanarZ"
+    ];
+
+    ids.forEach(function(id) {
+        const el = document.getElementById(id);
+        if (el) {
+            el.disabled = disabled;
+        }
+    });
+
+    if (!disabled) {
+        updateAplAvailability();
+    }
+}
+
+function setVesicleEstimatorDisabled(disabled) {
+    ["vesicleDiameter", "vesiclePadding"].forEach(function(id) {
+        document.getElementById(id).disabled = disabled;
+    });
+}
+
+function updatePlanarShape() {
+    const shape = document.getElementById("planarShape").value;
+    const aspectRow = document.getElementById("aspectRatioRow");
+    const aspectInput = document.getElementById("xyAspectRatio");
+    const zRow = document.getElementById("estimatedPlanarZRow");
+    const zInput = document.getElementById("estimatedPlanarZ");
+    const cubicNote = document.getElementById("cubicBoxNote");
+
+    const isPlanarEstimate =
+        document.getElementById("boxMode").value === "estimate" &&
+        document.getElementById("membraneType").value === "planar";
+
+    const rectangular = isPlanarEstimate && shape === "rectangular";
+    const cubic = isPlanarEstimate && shape === "cubic";
+
+    aspectRow.classList.toggle("hidden", !rectangular);
+    aspectInput.disabled = !rectangular;
+
+    zRow.classList.toggle("hidden", cubic);
+    zInput.disabled = !isPlanarEstimate || cubic;
+
+    cubicNote.classList.toggle("hidden", !cubic);
+}
+
+function getActiveLipids(selector) {
+    const active = [];
+
+    document.querySelectorAll(selector).forEach(function(input) {
+        const value = Number(input.value);
+        const lipid = input.dataset.lipid;
+
+        if (
+            lipid &&
+            Number.isFinite(value) &&
+            value > 0
+        ) {
+            active.push(lipid);
+        }
+    });
+
+    return Array.from(new Set(active));
+}
+
+function getUnavailableAplLipids(lipids, resolution) {
+    return lipids.filter(function(lipid) {
+        const record = APL_AVAILABILITY[lipid];
+        return !record || record[resolution] !== true;
+    });
+}
+
+function updateAplAvailability() {
+    const resolution = document.getElementById("resolution").value;
+    const boxMode = document.getElementById("boxMode").value;
+    const geometry = document.getElementById("membraneType").value;
+    const limbsRadio = document.getElementById("aplSourceLimbs");
+    const customRadio = document.getElementById("aplSourceCustom");
+    const warning = document.getElementById("aplUnavailableWarning");
+
+    const planarEstimate = boxMode === "estimate" && geometry === "planar";
+    const modelSupported =
+        APL_LIBRARY_AVAILABLE &&
+        (resolution === "CG" || resolution === "AA");
+
+    const upperLipids = getActiveLipids(".upper-value");
+    const lowerLipids = getActiveLipids(".lower-value");
+    const unavailableUpper = getUnavailableAplLipids(upperLipids, resolution);
+    const unavailableLower = getUnavailableAplLipids(lowerLipids, resolution);
+    const hasUnavailable =
+        unavailableUpper.length > 0 || unavailableLower.length > 0;
+
+    if (!planarEstimate) {
+        limbsRadio.disabled = true;
+        warning.classList.add("hidden");
+        warning.innerHTML = "";
+        updateAplSource();
+        updateAplCompositionHint();
+        return;
+    }
+
+    if (!modelSupported || hasUnavailable) {
+        limbsRadio.disabled = true;
+
+        if (limbsRadio.checked) {
+            customRadio.checked = true;
+        }
+    }
+    else {
+        limbsRadio.disabled = false;
+    }
+
+    if (hasUnavailable) {
+        const geometryNames =
+            geometry === "vesicle"
+                ? {upper: "Outer leaflet", lower: "Inner leaflet"}
+                : {upper: "Upper leaflet", lower: "Lower leaflet"};
+
+        const parts = [];
+
+        if (unavailableUpper.length > 0) {
+            parts.push(
+                "<strong>" + geometryNames.upper + ":</strong> " +
+                unavailableUpper.join(", ")
+            );
+        }
+
+        if (unavailableLower.length > 0) {
+            parts.push(
+                "<strong>" + geometryNames.lower + ":</strong> " +
+                unavailableLower.join(", ")
+            );
+        }
+
+        warning.classList.remove("hidden");
+        warning.innerHTML =
+            "<strong>LiMBS-assisted APL is unavailable for this composition.</strong><br>" +
+            "No suitable standalone UI reference APL is available for:<br>" +
+            parts.join("<br>") +
+            "<br><br>These lipids can still be structurally supported by LiMBS. " +
+            "Only the automatic APL estimate is unavailable. Please enter a " +
+            "user-specified APL for this membrane.";
+    }
+    else if (!modelSupported) {
+        warning.classList.remove("hidden");
+        warning.innerHTML =
+            "<strong>LiMBS-assisted APL is unavailable for this resolution.</strong><br>" +
+            "Please enter a user-specified APL.";
+    }
+    else {
+        warning.classList.add("hidden");
+        warning.innerHTML = "";
+    }
+
+    updateAplSource();
+    updateAplCompositionHint();
+}
+
+function updateAplSource() {
+    const limbsRadio = document.getElementById("aplSourceLimbs");
+    const customRadio = document.getElementById("aplSourceCustom");
+    const limbsPanel = document.getElementById("limbsAplPanel");
+    const customPanel = document.getElementById("customAplPanel");
+    const temperature = document.getElementById("temperatureK");
+    const customApl = document.getElementById("customApl");
+    const isPlanarEstimate =
+        document.getElementById("boxMode").value === "estimate" &&
+        document.getElementById("membraneType").value === "planar";
+
+    if (!isPlanarEstimate) {
+        limbsPanel.classList.add("hidden");
+        customPanel.classList.add("hidden");
+        temperature.disabled = true;
+        customApl.disabled = true;
+        document.getElementById("customAplUpper").disabled = true;
+        document.getElementById("customAplLower").disabled = true;
+        return;
+    }
+
+    if (limbsRadio.checked && !limbsRadio.disabled) {
+        limbsPanel.classList.remove("hidden");
+        customPanel.classList.add("hidden");
+        temperature.disabled = false;
+        customApl.disabled = true;
+        document.getElementById("customAplUpper").disabled = true;
+        document.getElementById("customAplLower").disabled = true;
+    }
+    else {
+        customRadio.checked = true;
+        limbsPanel.classList.add("hidden");
+        customPanel.classList.remove("hidden");
+        temperature.disabled = true;
+        customApl.disabled = false;
+        updateSeparateLeafletApl();
+    }
+
+    updateAplCompositionHint();
+}
+
+function updateSeparateLeafletApl() {
+    const separate = document.getElementById("separateLeafletApl").checked;
+    const customPanelVisible =
+        !document.getElementById("customAplPanel").classList.contains("hidden");
+    const grid = document.getElementById("leafletAplGrid");
+    const shared = document.getElementById("customApl");
+    const upper = document.getElementById("customAplUpper");
+    const lower = document.getElementById("customAplLower");
+
+    grid.classList.toggle("hidden", !separate || !customPanelVisible);
+
+    if (!customPanelVisible) {
+        shared.disabled = true;
+        upper.disabled = true;
+        lower.disabled = true;
+    }
+    else if (separate) {
+        shared.disabled = true;
+        upper.disabled = false;
+        lower.disabled = false;
+    }
+    else {
+        shared.disabled = false;
+        upper.disabled = true;
+        lower.disabled = true;
+    }
+}
+
+function updateRatioSizeInput() {
+    const showTarget =
+        document.getElementById("leafletMode").value === "ratio" &&
+        document.getElementById("membraneType").value === "planar" &&
+        document.getElementById("boxMode").value === "estimate";
+
+    const section = document.getElementById("targetLipidsSection");
+    const input = document.getElementById("targetLipids");
+
+    section.classList.toggle("hidden", !showTarget);
+    input.disabled = !showTarget;
+}
+
+function countActive(selector) {
+    let n = 0;
+    document.querySelectorAll(selector).forEach(function(input) {
+        const value = Number(input.value);
+        if (Number.isFinite(value) && value > 0) {
+            n += 1;
+        }
+    });
+    return n;
+}
+
+function updateAplCompositionHint() {
+    const hint = document.getElementById("aplCompositionHint");
+    if (!hint) return;
+
+    const upperN = countActive(".upper-value");
+    const lowerN = countActive(".lower-value");
+
+    if (upperN === 0 && lowerN === 0) {
+        hint.innerHTML =
+            "After lipid composition is entered, LiMBS will determine whether " +
+            "each leaflet uses a pure-lipid reference or a composition-weighted starting estimate.";
+        return;
+    }
+
+    const upperText =
+        upperN === 0 ? "no lipid entered yet" :
+        upperN === 1 ? "pure-lipid reference" :
+        "composition-weighted starting estimate";
+
+    const lowerText =
+        lowerN === 0 ? "no lipid entered yet" :
+        lowerN === 1 ? "pure-lipid reference" :
+        "composition-weighted starting estimate";
+
+    const geometry = document.getElementById("membraneType").value;
+    const upperName = geometry === "vesicle" ? "Outer" : "Upper";
+    const lowerName = geometry === "vesicle" ? "Inner" : "Lower";
+
+    hint.innerHTML =
+        "<strong>" + upperName + " leaflet:</strong> " + upperText + ". " +
+        "<strong>" + lowerName + " leaflet:</strong> " + lowerText + ".";
+}
+
+function updateConstructionTool() {
+    const resolution = document.getElementById("resolution").value;
+    const geometry = document.getElementById("membraneType").value;
+    const leafletMode = document.getElementById("leafletMode").value;
+    const section = document.getElementById("constructionToolSection");
+    const text = document.getElementById("constructionToolText");
+    const link = document.getElementById("builderDownloadLink");
+
+    if (resolution !== "CG") {
+        section.classList.add("hidden");
+        return;
+    }
+
+    section.classList.remove("hidden");
+
+    if (geometry === "planar") {
+        text.innerHTML =
+            "<strong>INSANE</strong><br>" +
+            "Recommended for the selected coarse-grained planar membrane.";
+        link.href = "/download/builder/insane";
+        link.textContent = "Download LiMBS_INSANE.py";
+    }
+    else {
+        let modeNote = "";
+        if (leafletMode !== "ratio") {
+            modeNote =
+                "<br><span class='muted'>The current LiMBS-TS2CG adapter requires Ratio mode.</span>";
+        }
+
+        text.innerHTML =
+            "<strong>TS2CG</strong><br>" +
+            "Recommended for the selected coarse-grained vesicle." +
+            modeNote;
+        link.href = "/download/builder/ts2cg";
+        link.textContent = "Download LiMBS_TS2CG.py";
+    }
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    updateResolution();
+    updateGeometry();
+    updateLeafletMode();
+    updateBoxMode();
+    updateAplAvailability();
+    updateConstructionTool();
+});
+</script>
+
+</body>
+</html>

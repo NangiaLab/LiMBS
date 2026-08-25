@@ -3,15 +3,12 @@
 """
 LiMBS1.0 to INSANE exporter.
 
-Converts a validated LiMBS CG planar membrane file into an INSANE
-command line, then optionally executes it to produce membrane.gro
-and membrane.top.
+Converts a validated LiMBS CG planar membrane file into an INSANE command line, then optionally executes it to produce membrane.gro and membrane.top.
 
 Workflow
-LiMBS .txt  to  parser  to  JSON dict  to INSANE command  and it gives .gro and .top files.
+LiMBS .txt  to  parser  to  JSON dict  to  INSANE command  to  .gro / .top
 
 Usage examples
-
 # Print INSANE command only (dry-run):
 python limbs_insane.py mySystem_CG.txt --dry-run
 
@@ -25,9 +22,8 @@ python limbs_insane.py mySystem_CG.txt --write-json out.json --insane-script ins
 python limbs_insane.py out.json --from-json --insane-script insane.py
 
 Requirements
-------------
-- LiMBSv1_parser.py  (must be in the same directory)
-- insane.py (or insane_peptoid_py3.py) reachable at --insane-script path
+- limbs_insane.py  (must be in the same directory)
+- insane.py reachable at --insane-script path
 - Python 3.6+, no extra dependencies
 """
 
@@ -37,7 +33,7 @@ import os
 import subprocess
 import sys
 
-# Import the LiMBS parser 
+#Import the parser
 try:
     from LiMBSv1_parser import (
         LiMBSParser,
@@ -51,11 +47,11 @@ except ImportError as _e:
         f"the same directory as this script.\nDetail: {_e}"
     )
 
-#  INSANE script name 
-INSANE_SCRIPT = "insane.py"
+#INSANE script name 
+INSANE_SCRIPT_DEFAULT = "insane.py"
 
 
-# File I/O helpers 
+#File I/O helpers 
 
 def read_text_file(path):
     if not os.path.isfile(path):
@@ -71,7 +67,7 @@ def read_json_file(path):
         return json.load(fh)
 
 
-# LiMBS to  JSON 
+#LiMBS to JSON
 
 def limbs_to_json(path):
     """Parse a LiMBS text file and return the JSON-compatible dict."""
@@ -120,11 +116,11 @@ def validate_for_insane(data):
     if not leaflets:
         errors.append("Missing leaflet information in parsed system.")
     else:
-        if leaflets.get("mode") != "count":
+        if leaflets.get("mode") not in ( "count", "ratio"):
             errors.append(
                 f"Leaflet mode is '{leaflets.get('mode')}'. "
-                "INSANE requires leaflet:count mode "
-                "(use leaflet:ratio only for vesicles)."
+                "INSANE supports leaflet:count or leaflet:ratio "
+                "for planar CG membranes."
             )
         if not leaflets.get("upper"):
             errors.append("Upper leaflet composition is empty.")
@@ -157,10 +153,9 @@ def validate_for_insane(data):
         )
 
 
-# Build INSANE command
+#Build INSANE command
 
-def build_insane_command(data, insane_script, out_gro, out_top,
-                         rand, solr, python_exe):
+def build_insane_command(data, insane_script, out_gro, out_top,rand, solr, python_exe):
     """
     Translate the LiMBS JSON dict into an INSANE command-line list.
 
@@ -205,7 +200,7 @@ def build_insane_command(data, insane_script, out_gro, out_top,
     return cmd
 
 
-#  Main 
+#Main
 
 def main():
     ap = argparse.ArgumentParser(
@@ -275,7 +270,7 @@ def main():
 
     args = ap.parse_args()
 
-    # Step 1: parse LiMBS or load JSON 
+    #Step 1: parse LiMBS
     try:
         if args.from_json:
             print(f"Loading LiMBS JSON: {args.input}")
@@ -285,18 +280,18 @@ def main():
             data = limbs_to_json(args.input)
             print("  Validation: PASSED")
 
-        # Step 2: check INSANE compatibility
+        #Step 2: check INSANE compatibility 
         validate_for_insane(data)
         print("  INSANE compatibility: OK")
 
-        # Step 3: optionally save JSON 
+        #Step 3: optionally save JSON 
         if args.write_json:
             with open(args.write_json, "w", encoding="utf-8") as fh:
                 json.dump(data, fh, indent=2)
                 fh.write("\n")
             print(f"  JSON saved: {args.write_json}")
 
-        # Step 4: build command 
+        #Step 4: build command
         cmd = build_insane_command(
             data=data,
             insane_script=args.insane_script,
@@ -311,7 +306,7 @@ def main():
         print(f"\nError: {exc}", file=sys.stderr)
         sys.exit(1)
 
-    # Step 5: print command 
+    #Step 5: print command
     print("\nGenerated INSANE command:")
     print("  " + " ".join(cmd))
 
@@ -319,7 +314,7 @@ def main():
         print("\nDry-run mode: command was not executed.")
         return
 
-    # Step 6: run INSANE
+    #Step 6: run INSANE
     print("\nRunning INSANE...")
     retcode = subprocess.call(cmd)
 
