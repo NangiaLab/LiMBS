@@ -51,9 +51,9 @@ DOPE=CG|[
 [#TailA]
 [#TailB]
 
-{#TailA=[>][CCCC:^C1A][CC(C=C):^D2A][CCCC:^C3A][CCCC:^C4A]}
+{#TailA=[>][CCCCC:^C1A][CC(C=C):^D2A][CCCC:^C3A][CCCC:^C4A]}
 
-{#TailB=[>][CCCC:^C1B][CC(C=C):^D2B][CCCC:^C3B][CCCC:^C4B]}
+{#TailB=[>][CCCCC:^C1B][CC(C=C):^D2B][CCCC:^C3B][CCCC:^C4B]}
 
 |
 
@@ -81,9 +81,9 @@ DOPG=CG|[
 [#TailA]
 [#TailB]
 
-{#TailA=[>][CCCC:^C1A][CC(C=C):^D2A][CCCC:^C3A][CCCC:^C4A]}
+{#TailA=[>][CCCCC:^C1A][CC(C=C):^D2A][CCCC:^C3A][CCCC:^C4A]}
 
-{#TailB=[>][CCCC:^C1B][CC(C=C):^D2B][CCCC:^C3B][CCCC:^C4B]}
+{#TailB=[>][CCCCC:^C1B][CC(C=C):^D2B][CCCC:^C3B][CCCC:^C4B]}
 
 |
 
@@ -111,9 +111,9 @@ DOPS=CG|[
 [#TailA]
 [#TailB]
 
-{#TailA=[>][CCCC:^C1A][CC(C=C):^D2A][CCCC:^C3A][CCCC:^C4A]}
+{#TailA=[>][CCCCC:^C1A][CC(C=C):^D2A][CCCC:^C3A][CCCC:^C4A]}
 
-{#TailB=[>][CCCC:^C1B][CC(C=C):^D2B][CCCC:^C3B][CCCC:^C4B]}
+{#TailB=[>][CCCCC:^C1B][CC(C=C):^D2B][CCCC:^C3B][CCCC:^C4B]}
 
 |
 
@@ -141,9 +141,9 @@ DPPC=CG|[
 [#TailA]
 [#TailB]
 
-{#TailA=[>][CCCC:^C1A][CCCC:^C2A][CCCC:^C3A][CCCC:^C4A]}
+{#TailA=[>][CCC:^C1A][CCCC:^C2A][CCCC:^C3A][CCCC:^C4A]}
 
-{#TailB=[>][CCCC:^C1B][CCCC:^C2B][CCCC:^C3B][CCCC:^C4B]}
+{#TailB=[>][CCC:^C1B][CCCC:^C2B][CCCC:^C3B][CCCC:^C4B]}
 
 |
 
@@ -170,9 +170,9 @@ POPA=CG|[
 [#TailA]
 [#TailB]
 
-{#TailA=[>][CCCC:^C1A][CC(C=C):^D2A][CCCC:^C3A][CCCC:^C4A]}
+{#TailA=[>][CCCCC:^C1A][CC(C=C):^D2A][CCCC:^C3A][CCCC:^C4A]}
 
-{#TailB=[>][CCCC:^C1B][CCCC:^C2B][CCCC:^C3B][CCCC:^C4B]}
+{#TailB=[>][CCC:^C1B][CCCC:^C2B][CCCC:^C3B][CCCC:^C4B]}
 
 |
 
@@ -199,9 +199,9 @@ POPC=CG|[
 [#TailA]
 [#TailB]
 
-{#TailA=[>][CCCC:^C1A][CC(C=C):^D2A][CCCC:^C3A][CCCC:^C4A]}
+{#TailA=[>][CCCCC:^C1A][CC(C=C):^D2A][CCCC:^C3A][CCCC:^C4A]}
 
-{#TailB=[>][CCCC:^C1B][CCCC:^C2B][CCCC:^C3B][CCCC:^C4B]}
+{#TailB=[>][CCC:^C1B][CCCC:^C2B][CCCC:^C3B][CCCC:^C4B]}
 
 |
 
@@ -229,9 +229,9 @@ POPE=CG|[
 [#TailA]
 [#TailB]
 
-{#TailA=[>][CCCC:^C1A][CC(C=C):^D2A][CCCC:^C3A][CCCC:^C4A]}
+{#TailA=[>][CCCCC:^C1A][CC(C=C):^D2A][CCCC:^C3A][CCCC:^C4A]}
 
-{#TailB=[>][CCCC:^C1B][CCCC:^C2B][CCCC:^C3B][CCCC:^C4B]}
+{#TailB=[>][CCC:^C1B][CCCC:^C2B][CCCC:^C3B][CCCC:^C4B]}
 
 |
 
@@ -259,9 +259,9 @@ POPG=CG|[
 [#TailA]
 [#TailB]
 
-{#TailA=[>][CCCC:^C1A][CC(C=C):^D2A][CCCC:^C3A][CCCC:^C4A]}
+{#TailA=[>][CCCCC:^C1A][CC(C=C):^D2A][CCCC:^C3A][CCCC:^C4A]}
 
-{#TailB=[>][CCCC:^C1B][CCCC:^C2B][CCCC:^C3B][CCCC:^C4B]}
+{#TailB=[>][CCC:^C1B][CCCC:^C2B][CCCC:^C3B][CCCC:^C4B]}
 
 |
 
@@ -289,9 +289,9 @@ POPS=CG|[
 [#TailA]
 [#TailB]
 
-{#TailA=[>][CCCC:^C1A][CC(C=C):^D2A][CCCC:^C3A][CCCC:^C4A]}
+{#TailA=[>][CCCCC:^C1A][CC(C=C):^D2A][CCCC:^C3A][CCCC:^C4A]}
 
-{#TailB=[>][CCCC:^C1B][CCCC:^C2B][CCCC:^C3B][CCCC:^C4B]}
+{#TailB=[>][CCC:^C1B][CCCC:^C2B][CCCC:^C3B][CCCC:^C4B]}
 
 |
 
