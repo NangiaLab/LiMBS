@@ -28,7 +28,7 @@ parser/
 ##  No Python dependencies required (Python 3.6+ standard library only).
 
 ## External tools:
-  - insane.py or insane_peptoid_py3.py  (for planar membranes)
+  - insane.py   (for planar membranes)
   - TS2CG executable in PATH            (for vesicles)
 
 ## LiMBS Web Interface
