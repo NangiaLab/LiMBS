@@ -1,0 +1,19 @@
+#include "/home/pkhadka/MARTINI3/forcefield/martini_v3.0.0.itp"
+
+#include "/home/pkhadka/MARTINI3/forcefield/martini_v3.0.0_ions_v1.itp"
+
+#include "/home/pkhadka/MARTINI3/forcefield/martini_v3.0.0_solvents_v1.itp"
+
+#include "/home/pkhadka/MARTINI3/forcefield/martini_v3.0.0_phospholipids_v1.itp"
+
+[ system ]
+; name
+INSANE! Membrane UpperLeaflet>DPPC=1.0 LowerLeaflet>DPPC=1.0
+
+[ molecules ]
+; name  number
+DPPC           169
+DPPC           169
+W             2737
+NA              30
+CL              30
