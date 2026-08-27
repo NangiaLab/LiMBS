@@ -1,0 +1,57 @@
+integrator               = md
+dt                       = 0.020
+nsteps                   = 1250000     
+continuation             = no
+
+; Center-of-mass motion removal
+comm-mode                = Linear
+nstcomm                  = 100
+comm-grps                = Membrane W_ION 
+
+; Output
+nstxout                  = 0
+nstvout                  = 0
+nstfout                  = 0
+nstlog                   = 5000        ; 0.1 ns
+nstenergy                = 5000        ; 0.1 ns
+nstxout-compressed       = 50000       ; 1 ns
+compressed-x-precision   = 100
+
+; Neighbor list and nonbonded interactions
+cutoff-scheme            = Verlet
+nstlist                  = 20
+nsttcouple               = 20
+rlist                    = 1.35
+verlet-buffer-tolerance  = -1
+pbc                      = xyz
+
+coulombtype              = reaction-field
+rcoulomb                 = 1.1
+epsilon_r                = 15
+epsilon_rf               = 0
+
+vdw-type                 = cutoff
+vdw-modifier             = Potential-shift-verlet
+rvdw                     = 1.1
+DispCorr                 = No
+
+; Temperature coupling
+tcoupl                   = v-rescale
+tc-grps                  = Membrane W_ION 
+tau_t                    = 1.0    1.0
+ref_t                    = 310.15 310.15 
+
+; Pressure coupling
+pcoupl                   = no
+
+; Generate velocities for the first dynamics stage
+gen_vel                  = yes
+gen_temp                 = 310.15
+gen_seed                 = -1
+
+; Constraints
+constraints              = none
+constraint-algorithm     = Lincs
+lincs-iter               = 2
+lincs-order              = 8
+lincs-warnangle          = 90
