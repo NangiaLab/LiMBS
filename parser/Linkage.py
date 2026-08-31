@@ -34,7 +34,7 @@ from typing import Any
 
 # Linkage-table metadata
 
-TABLE_VERSION = "2.0"
+TABLE_VERSION = "1.0"
 TABLE_DATE = "2026-06"
 
 
@@ -44,7 +44,6 @@ TABLE_DATE = "2026-06"
 #   partial    = LMID is present but one or more other identifiers are missing
 #   class-only = only a lipid-class identifier is available
 #   unknown    = lipid is not present in this static linkage table
-#
 # IMPORTANT:
 # The values below are treated as curated static data. This script validates
 # identifier *format* only; it does not verify database records over the web.
