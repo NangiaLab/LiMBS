@@ -25,7 +25,7 @@ parser/
 -  LiMBS_insane.py: Converts LiMBS CG planar membrane notation into INSANE-compatible input to produce .gro and .top files.
 - LiMBS_vesicle.py:  Converts LiMBS CG vesicle notation into TS2CG input (input.str) and runs PLM + PCG steps.
   
-##  No Python dependencies required (Python 3.6+ standard library only).
+##  No additional Python packages are required. The LiMBS1.0 reference implementation requires Python 3 and was tested with Python 3.11.15.
 
 ## External tools:
   - insane.py   (for planar membranes)
