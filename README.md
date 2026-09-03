@@ -35,8 +35,6 @@ parser/
 
 LiMBS line notation can be generated interactively using the LiMBS web interface:
 
-https://limbs-1.onrender.com
-Password:3418cc5010aff79d164884c6de4923c71c04c00224e4821f8d78f8fc472e44f1
-
+https://limbs-1-59nb.onrender.com
 
 
