@@ -9,53 +9,31 @@ Generate LiMBS1.0 notation from the web form.
 Generate resolution-specific lipid/environment species blocks.
 Validate generated notation with LiMBSv1_parser.py.
 Display canonical LiMBS and structured JSON.
-Provide manual or assisted box-dimension guidance.
-Use the curated LiMBS APL reference library when the user explicitly chooses it.
-For mixed planar membranes, provide a clearly labelled composition-weighted starting estimate only when every component has a suitable UI reference.
+Record user-supplied simulation-box dimensions without estimating membrane properties.
 Recommend a downstream construction interface only for supported CG systems:
      CG planar  -> INSANE
      CG vesicle -> TS2CG
 Provide downloadable LiMBS builder-interface scripts.
 
-Reference APL values are construction aids, not universal lipid constants or equilibrium membrane properties.  Mixed-membrane estimates are explicitly labelled approximations.  User-provided APL values always remain available.
+LiMBS is a representation language, not a membrane builder. Area-per-lipid values and other builder- or force-field-specific construction parameters are intentionally left to downstream tools and user-selected simulation protocols.
 The web application generates previews and files; it does not execute INSANE or TS2CG.
 """
 
 from __future__ import annotations
 
-import hmac
 import json
 import math
-import os
 import re
-import secrets
 import shlex
-from datetime import timedelta
 from html import escape
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Tuple
 
-from flask import (
-    Flask,
-    abort,
-    redirect,
-    render_template,
-    request,
-    send_file,
-    session,
-    url_for,
-)
+from flask import Flask, abort, render_template, request, send_file, url_for
 
 from lipid_registry import LIPIDS
 from cg_templates import generate_cg_block
 
-
-# Optional curated APL reference library
-
-try:
-    from apl_reference_combined import get_reference_for_ui
-except ImportError:
-    get_reference_for_ui = None
 
 
 # Optional AA / SCG template libraries
@@ -90,114 +68,6 @@ except ImportError as exc:
 
 app = Flask(__name__)
 PROJECT_DIR = Path(__file__).resolve().parent
-
-
-# ============================================================================
-# Reviewer access protection
-# ============================================================================
-#
-# To enable password protection, define LIMBS_ACCESS_PASSWORD in the hosting
-# environment (for example, in Render -> Environment).
-#
-# The password is intentionally NOT stored in this source file.
-#
-# SECRET_KEY should also be defined in production so reviewer sessions survive
-# service restarts.  When it is absent, a temporary key is generated for local
-# development.
-#
-# Example Render environment variables:
-#
-#     LIMBS_ACCESS_PASSWORD = <reviewer password>
-#     SECRET_KEY            = <long random secret>
-#
-# When LIMBS_ACCESS_PASSWORD is not defined, access protection is disabled.
-# This keeps local development convenient while allowing the deployed reviewer
-# site to be protected through environment configuration.
-
-ACCESS_PASSWORD = os.environ.get("LIMBS_ACCESS_PASSWORD", "").strip()
-AUTH_ENABLED = bool(ACCESS_PASSWORD)
-
-app.secret_key = os.environ.get("SECRET_KEY") or secrets.token_hex(32)
-
-app.config.update(
-    SESSION_COOKIE_HTTPONLY=True,
-    SESSION_COOKIE_SAMESITE="Lax",
-    SESSION_COOKIE_SECURE=(
-        os.environ.get("RENDER", "").strip().lower() == "true"
-    ),
-    PERMANENT_SESSION_LIFETIME=timedelta(hours=12),
-)
-
-
-@app.before_request
-def require_reviewer_access():
-    """Require reviewer authentication when password protection is enabled."""
-
-    if not AUTH_ENABLED:
-        return None
-
-    public_endpoints = {
-        "reviewer_login",
-        "reviewer_logout",
-        "healthcheck",
-        "static",
-    }
-
-    if request.endpoint in public_endpoints:
-        return None
-
-    if session.get("limbs_reviewer_authenticated"):
-        return None
-
-    return redirect(url_for("reviewer_login"))
-
-
-@app.route("/login", methods=["GET", "POST"])
-def reviewer_login():
-    """Display and process the temporary reviewer-access login page."""
-
-    if not AUTH_ENABLED:
-        return redirect(url_for("home"))
-
-    if session.get("limbs_reviewer_authenticated"):
-        return redirect(url_for("home"))
-
-    error = None
-
-    if request.method == "POST":
-        submitted_password = request.form.get("password", "")
-
-        if hmac.compare_digest(submitted_password, ACCESS_PASSWORD):
-            session.clear()
-            session["limbs_reviewer_authenticated"] = True
-            session.permanent = True
-            return redirect(url_for("home"))
-
-        error = "Incorrect access password."
-
-    return render_template(
-        "login.html",
-        error=error,
-    )
-
-
-@app.route("/logout")
-def reviewer_logout():
-    """End the current reviewer session."""
-
-    session.clear()
-
-    if AUTH_ENABLED:
-        return redirect(url_for("reviewer_login"))
-
-    return redirect(url_for("home"))
-
-
-@app.route("/health")
-def healthcheck():
-    """Unauthenticated health endpoint for hosting-platform health checks."""
-
-    return "OK", 200
 
 
 # General helpers
@@ -297,222 +167,6 @@ def parse_positive_float(raw: str, field_name: str, allow_zero: bool = False) ->
         raise ValueError(f"{field_name} must be greater than zero.")
 
     return value
-
-
-# APL and composition helpers
-
-
-def active_composition(composition: Dict[str, Any]) -> Dict[str, float]:
-    """Return positive lipid entries as normalized uppercase keys."""
-    clean: Dict[str, float] = {}
-
-    for lipid, raw_value in composition.items():
-        value = float(raw_value)
-        if value > 0:
-            clean[str(lipid).strip().upper()] = value
-
-    return clean
-
-
-def default_apl_model(resolution: str) -> Optional[str]:
-    """Return the curated reference model used for assisted APL lookup."""
-    resolution = str(resolution).strip().upper()
-
-    if resolution == "CG":
-        return "Martini3"
-    if resolution == "AA":
-        return "CHARMM36"
-    return None
-
-
-def build_apl_availability_map() -> Dict[str, Dict[str, bool]]:
-    """
-    Return per-lipid APL-reference availability for the web interface.
-
-    This reports only whether a suitable UI-recommended reference exists.
-    It does not describe structural/template support.  In particular, a lipid
-    such as CHOL can be structurally supported while intentionally having no
-    standalone APL reference.
-    """
-    availability: Dict[str, Dict[str, bool]] = {}
-
-    for lipid in LIPIDS:
-        availability[lipid] = {
-            "CG": False,
-            "AA": False,
-            "SCG": False,
-        }
-
-        if get_reference_for_ui is None:
-            continue
-
-        for resolution, model in (("CG", "Martini3"), ("AA", "CHARMM36")):
-            try:
-                ref = get_reference_for_ui(
-                    lipid=lipid,
-                    resolution=resolution,
-                    model=model,
-                )
-            except (KeyError, TypeError, ValueError):
-                ref = None
-
-            availability[lipid][resolution] = (
-                ref is not None and ref.get("value_nm2") is not None
-            )
-
-    return availability
-
-
-def read_optional_temperature() -> Optional[float]:
-    """Read an optional target temperature in K for reference selection."""
-    raw = request.form.get("temperature_k", "").strip()
-    if not raw:
-        return None
-
-    return parse_positive_float(raw, "Temperature")
-
-
-def get_leaflet_reference_apl(
-    composition: Dict[str, Any],
-    resolution: str,
-    model: str,
-    target_temperature_K: Optional[float] = None,
-) -> Dict[str, Any]:
-    """
-    Return a pure-lipid reference or a composition-weighted starting estimate.
-
-    The mixed estimate is calculated only when every lipid has an appropriate
-    UI reference.  Missing/caution-only references are never silently replaced.
-    """
-    comp = active_composition(composition)
-
-    if not comp:
-        return {
-            "available": False,
-            "reason": "Leaflet composition is empty.",
-            "missing_lipids": [],
-        }
-
-    if get_reference_for_ui is None:
-        return {
-            "available": False,
-            "reason": (
-                "The curated APL reference library is not installed. "
-                "Choose a user-specified APL."
-            ),
-            "missing_lipids": list(comp),
-        }
-
-    total = sum(comp.values())
-    components: List[Dict[str, Any]] = []
-    missing: List[str] = []
-
-    for lipid, amount in sorted(comp.items()):
-        ref = get_reference_for_ui(
-            lipid=lipid,
-            resolution=resolution,
-            model=model,
-            target_temperature_K=target_temperature_K,
-        )
-
-        if ref is None or ref.get("value_nm2") is None:
-            missing.append(lipid)
-            continue
-
-        fraction = amount / total
-        components.append(
-            {
-                "lipid": lipid,
-                "amount": amount,
-                "fraction": fraction,
-                "value_nm2": float(ref["value_nm2"]),
-                "temperature_K": ref.get("temperature_K"),
-                "model": ref.get("model", model),
-                "source": ref.get("source", {}),
-                "display_label": ref.get("display_label"),
-            }
-        )
-
-    if missing:
-        return {
-            "available": False,
-            "reason": (
-                "No suitable LiMBS UI reference APL is available for: "
-                + ", ".join(missing)
-                + ". Choose a user-specified APL for this membrane."
-            ),
-            "missing_lipids": missing,
-            "components": components,
-        }
-
-    if len(components) == 1:
-        value_nm2 = components[0]["value_nm2"]
-        method = "pure-lipid-reference"
-        label = "LiMBS reference APL"
-    else:
-        value_nm2 = sum(
-            item["fraction"] * item["value_nm2"]
-            for item in components
-        )
-        method = "composition-weighted-estimate"
-        label = "LiMBS composition-weighted starting estimate"
-
-    return {
-        "available": True,
-        "value_nm2": value_nm2,
-        "method": method,
-        "label": label,
-        "components": components,
-        "missing_lipids": [],
-        "warning": (
-            "Reference APL values are construction aids. A composition-weighted "
-            "value is an initial approximation derived from pure-lipid references "
-            "and is not an equilibrium APL for the mixed membrane."
-        ),
-    }
-
-
-def read_user_apl(leaflet_name: str) -> float:
-    """
-    Read a user-supplied APL.
-
-    New forms may provide leaflet-specific fields.  The shared custom_apl field
-    and the legacy reference_apl field are retained as fallbacks.
-    """
-    candidates = [
-        request.form.get(f"custom_apl_{leaflet_name}", "").strip(),
-        request.form.get("custom_apl", "").strip(),
-        request.form.get("reference_apl", "").strip(),
-    ]
-
-    raw = next((value for value in candidates if value), "")
-    if not raw:
-        raise ValueError(
-            "Enter a user-specified area per lipid in nm²/lipid."
-        )
-
-    label = f"{leaflet_name.capitalize()} leaflet area per lipid"
-    return parse_positive_float(raw, label)
-
-
-def lateral_dimensions_from_area(
-    area_nm2: float,
-    shape: str,
-    aspect_ratio: float,
-) -> Tuple[float, float]:
-    """Convert a target XY area into square, rectangular, or cubic lateral dimensions."""
-    if shape in {"square", "cubic"}:
-        side = math.sqrt(area_nm2)
-        return side, side
-
-    if shape == "rectangular":
-        x = math.sqrt(area_nm2 * aspect_ratio)
-        y = math.sqrt(area_nm2 / aspect_ratio)
-        return x, y
-
-    raise ValueError(
-        "Planar box shape must be square, rectangular, or cubic."
-    )
 
 
 # Lipid metadata helpers
@@ -863,304 +517,29 @@ def determine_box(
     leaflet_mode: str,
     upper: Dict[str, Any],
     lower: Dict[str, Any],
-) -> Tuple[List[float], str, Dict[str, Any]]:
-    """
-    Determine simulation-box dimensions.
+) -> Tuple[List[float], str]:
+    """Read user-supplied box dimensions without estimating APL or box size."""
+    x = parse_positive_float(request.form.get("box_x", "10.0"), "X dimension")
+    y = parse_positive_float(request.form.get("box_y", "10.0"), "Y dimension")
+    z = parse_positive_float(request.form.get("box_z", "8.0"), "Z dimension")
 
-    Assisted planar dimensions may use either:
-      1. an explicit user APL, or
-      2. a LiMBS reference/composition-weighted starting estimate.
+    box = [x, y, z]
 
-    Assisted planar geometry may be square, rectangular, or cubic.
-    All assisted values are construction starting estimates, not equilibrium
-    membrane properties.
-    """
-    box_mode = request.form.get("box_mode", "manual").strip().lower()
-
-    if box_mode not in {"manual", "estimate"}:
-        raise ValueError("Dimension method must be manual or estimate.")
-
-    box_info: Dict[str, Any] = {
-        "mode": box_mode,
-        "membrane_type": membrane_type,
-        "resolution": resolution,
-    }
-
-    # Manual dimensions
-    if box_mode == "manual":
-        x = parse_positive_float(request.form.get("box_x", "10.0"), "X dimension")
-        y = parse_positive_float(request.form.get("box_y", "10.0"), "Y dimension")
-        z = parse_positive_float(request.form.get("box_z", "8.0"), "Z dimension")
-
-        box = [x, y, z]
-
-        if membrane_type == "planar":
-            area = x * y
-            box_info["projected_area"] = area
-
-            if leaflet_mode == "count":
-                upper_count = sum(int(v) for v in upper.values())
-                lower_count = sum(int(v) for v in lower.values())
-                upper_apl = area / upper_count
-                lower_apl = area / lower_count
-
-                box_info["upper_implied_apl"] = upper_apl
-                box_info["lower_implied_apl"] = lower_apl
-
-                guidance = (
-                    "Manual dimensions were used exactly as entered. "
-                    f"The projected XY area is {area:.3f} nm². "
-                    f"The implied APL is {upper_apl:.3f} nm²/lipid for the "
-                    f"upper leaflet and {lower_apl:.3f} nm²/lipid for the lower "
-                    "leaflet. These are diagnostics only."
-                )
-            else:
-                guidance = (
-                    "Manual dimensions were used exactly as entered. "
-                    f"The projected XY area is {area:.3f} nm². "
-                    "Ratio mode does not define a final lipid population, so an "
-                    "implied APL cannot be obtained from the box alone."
-                )
-        else:
-            guidance = (
-                "Manual vesicle box dimensions were used exactly as entered. "
-                "Choose dimensions large enough for the complete vesicle and "
-                "adequate solvent separation from periodic images."
-            )
-
-        return box, guidance, box_info
-
-    # Assisted planar estimate
-    if membrane_type == "planar":
-        shape = request.form.get(
-            "planar_shape",
-            request.form.get("box_shape", "square"),
-        ).strip().lower()
-
-        if shape not in {"square", "rectangular", "cubic"}:
-            raise ValueError(
-                "Planar box shape must be square, rectangular, or cubic."
-            )
-
-        if shape == "rectangular":
-            aspect_ratio = parse_positive_float(
-                request.form.get(
-                    "xy_aspect_ratio",
-                    request.form.get("aspect_ratio", "1.0"),
-                ),
-                "X:Y aspect ratio",
-            )
-        else:
-            aspect_ratio = 1.0
-
-        # For square/rectangular planar boxes, Z is independently supplied.
-        # For a cubic box, Z is linked to the lateral side and therefore does
-        # not need a separate user input.
-        if shape == "cubic":
-            z = None
-        else:
-            z = parse_positive_float(
-                request.form.get("estimated_planar_z", "8.0"),
-                "Planar Z dimension",
-            )
-
-        raw_apl_source = request.form.get("apl_source")
-        if raw_apl_source is None:
-            apl_source = "custom" if request.form.get("reference_apl") else "limbs"
-        else:
-            apl_source = raw_apl_source.strip().lower()
-
-        if apl_source in {"reference", "recommended", "limbs_reference"}:
-            apl_source = "limbs"
-        if apl_source in {"own", "manual", "user"}:
-            apl_source = "custom"
-
-        if apl_source not in {"limbs", "custom"}:
-            raise ValueError(
-                "APL source must be LiMBS reference/estimate or user-specified."
-            )
-
-        target_temperature = read_optional_temperature()
-        model = request.form.get("apl_model", "").strip() or default_apl_model(resolution)
-
-        if apl_source == "limbs":
-            if model is None:
-                raise ValueError(
-                    f"LiMBS does not currently provide a curated assisted APL "
-                    f"reference model for {resolution}. Choose a user-specified APL."
-                )
-
-            upper_apl_info = get_leaflet_reference_apl(
-                upper,
-                resolution=resolution,
-                model=model,
-                target_temperature_K=target_temperature,
-            )
-            lower_apl_info = get_leaflet_reference_apl(
-                lower,
-                resolution=resolution,
-                model=model,
-                target_temperature_K=target_temperature,
-            )
-
-            unavailable = []
-            if not upper_apl_info.get("available"):
-                unavailable.append("Upper leaflet: " + upper_apl_info["reason"])
-            if not lower_apl_info.get("available"):
-                unavailable.append("Lower leaflet: " + lower_apl_info["reason"])
-
-            if unavailable:
-                raise ValueError(
-                    "LiMBS-assisted APL is unavailable for this membrane. "
-                    + " ".join(unavailable)
-                )
-
-            upper_apl = float(upper_apl_info["value_nm2"])
-            lower_apl = float(lower_apl_info["value_nm2"])
-
-        else:
-            upper_apl = read_user_apl("upper")
-            lower_apl = read_user_apl("lower")
-            upper_apl_info = {
-                "available": True,
-                "value_nm2": upper_apl,
-                "method": "user-specified",
-                "label": "User-specified APL",
-                "components": [],
-            }
-            lower_apl_info = {
-                "available": True,
-                "value_nm2": lower_apl,
-                "method": "user-specified",
-                "label": "User-specified APL",
-                "components": [],
-            }
-
-        if leaflet_mode == "count":
-            upper_count = sum(int(v) for v in upper.values())
-            lower_count = sum(int(v) for v in lower.values())
-        else:
-            target_count = int(
-                parse_positive_float(
-                    request.form.get("target_lipids_per_leaflet", "100"),
-                    "Target lipids per leaflet",
-                )
-            )
-            upper_count = target_count
-            lower_count = target_count
-            box_info["target_lipids_per_leaflet"] = target_count
-
-        upper_area = upper_count * upper_apl
-        lower_area = lower_count * lower_apl
-        target_area = max(upper_area, lower_area)
-
-        mean_area = (upper_area + lower_area) / 2.0
-        area_mismatch_fraction = (
-            abs(upper_area - lower_area) / mean_area
-            if mean_area > 0
-            else 0.0
-        )
-
-        x, y = lateral_dimensions_from_area(
-            target_area,
-            shape=shape,
-            aspect_ratio=aspect_ratio,
-        )
-
-        if shape == "cubic":
-            z = x
-
-        source_phrase = (
-            "LiMBS reference/composition-weighted starting APL"
-            if apl_source == "limbs"
-            else "user-specified APL"
-        )
-
-        if shape == "cubic":
-            dimension_phrase = (
-                f"X = Y = Z = {x:.3f} nm. "
-                "Because cubic mode links the membrane-normal dimension to the "
-                "lateral side, verify that the resulting Z dimension provides "
-                "sufficient solvent separation for the intended system. "
-            )
-        elif shape == "square":
-            dimension_phrase = (
-                f"X = Y = {x:.3f} nm and Z = {z:.3f} nm. "
-            )
-        else:
-            dimension_phrase = (
-                f"X = {x:.3f} nm, Y = {y:.3f} nm, and Z = {z:.3f} nm. "
-            )
-
+    if membrane_type == "vesicle":
         guidance = (
-            f"Assisted planar dimensions were calculated using the {source_phrase}. "
-            f"Upper starting APL: {upper_apl:.5f} nm²/lipid; "
-            f"lower starting APL: {lower_apl:.5f} nm²/lipid. "
-            f"The corresponding preferred leaflet areas are {upper_area:.3f} and "
-            f"{lower_area:.3f} nm². LiMBS used the larger area ({target_area:.3f} "
-            f"nm²) to avoid undersizing the starting lateral area, giving "
-            + dimension_phrase
-            + "These are construction values and should not be interpreted as "
-            "equilibrium membrane properties."
+            "LiMBS records the user-supplied box dimensions exactly as entered. "
+            "Vesicle geometry, area-per-lipid values, surface rescaling, and other "
+            "TS2CG construction parameters remain downstream builder inputs and "
+            "are not estimated by LiMBS1.0."
+        )
+    else:
+        guidance = (
+            "LiMBS records the user-supplied box dimensions exactly as entered. "
+            "Area-per-lipid values and other force-field- or builder-dependent "
+            "construction parameters are not estimated by LiMBS1.0."
         )
 
-        if area_mismatch_fraction > 0.10:
-            guidance += (
-                f" The two leaflets imply areas that differ by "
-                f"{100.0 * area_mismatch_fraction:.1f}%; consider adjusting "
-                "leaflet counts/composition or supplying leaflet-specific APL values."
-            )
-
-        box_info.update(
-            {
-                "apl_source": apl_source,
-                "apl_model": model,
-                "temperature_K": target_temperature,
-                "planar_shape": shape,
-                "xy_aspect_ratio": aspect_ratio,
-                "z_linked_to_lateral": (shape == "cubic"),
-                "upper_apl": upper_apl,
-                "lower_apl": lower_apl,
-                "upper_apl_info": upper_apl_info,
-                "lower_apl_info": lower_apl_info,
-                "upper_preferred_area": upper_area,
-                "lower_preferred_area": lower_area,
-                "area_mismatch_fraction": area_mismatch_fraction,
-                "projected_area": target_area,
-            }
-        )
-
-        return [x, y, z], guidance, box_info
-
-    # Assisted vesicle estimate
-    diameter = parse_positive_float(
-        request.form.get("vesicle_diameter", "20.0"),
-        "Vesicle diameter",
-    )
-    padding = parse_positive_float(
-        request.form.get("vesicle_padding", "3.0"),
-        "Vesicle padding",
-        allow_zero=True,
-    )
-
-    side = diameter + (2.0 * padding)
-    box_info.update(
-        {
-            "vesicle_diameter": diameter,
-            "vesicle_padding": padding,
-        }
-    )
-
-    guidance = (
-        "The assisted vesicle box uses vesicle diameter + 2 × solvent padding. "
-        f"For a diameter of {format_decimal(diameter)} nm and "
-        f"{format_decimal(padding)} nm padding per side, the starting box is "
-        f"{format_decimal(side)} × {format_decimal(side)} × "
-        f"{format_decimal(side)} nm. This is a construction estimate; verify "
-        "solvent separation for the final built vesicle."
-    )
-
-    return [side, side, side], guidance, box_info
+    return box, guidance
 
 
 # LiMBS construction
@@ -1435,8 +814,8 @@ def build_ts2cg_preview(
     Official TS2CG input.str lipid lines use:
         LipidName  RatioUp  RatioDown  Area/Lipid
 
-    LiMBS does not currently store lipid-specific TS2CG APL values, so the
-    preview uses explicit placeholders instead of inventing numbers.
+    LiMBS does not estimate lipid-specific TS2CG APL values. The preview uses
+    explicit placeholders so that the user can supply builder- and force-field-specific values downstream.
     """
     lipid_names = sorted(set(upper) | set(lower))
 
@@ -1474,7 +853,7 @@ def build_ts2cg_preview(
 
     note = (
         "TS2CG requires an area-per-lipid value for each lipid in input.str. "
-        "Those values depend on the builder/model setup and are not part of "
+        "Those values depend on the builder/force-field setup and are not part of "
         "the current LiMBS core specification, so this website shows explicit "
         "APL placeholders rather than inventing values. Likewise, TS2CG "
         "surface rescaling is left as a builder-specific parameter and is not "
@@ -1606,7 +985,6 @@ def render_result_page(
     salt_conc: float,
     salt_species: str,
     box_guidance: str,
-    box_info: Dict[str, Any],
     notation: str,
     validation: Dict[str, Any],
     workflow: Dict[str, Any],
@@ -1641,33 +1019,6 @@ def render_result_page(
         if json_data is not None
         else "<p>Structured JSON unavailable because parsing failed.</p>"
     )
-
-    apl_html = ""
-    if box_info.get("mode") == "estimate" and membrane_type == "planar":
-        upper_apl = box_info.get("upper_apl")
-        lower_apl = box_info.get("lower_apl")
-        apl_source = box_info.get("apl_source")
-
-        if upper_apl is not None and lower_apl is not None:
-            source_label = (
-                "LiMBS reference / composition-weighted estimate"
-                if apl_source == "limbs"
-                else "User-specified APL"
-            )
-            apl_html = f"""
-            <div class="section">
-                <h2>Assisted APL Summary</h2>
-                <table>
-                    <tr><th>APL source</th><td>{escape(source_label)}</td></tr>
-                    <tr><th>Upper leaflet</th><td>{upper_apl:.5f} nm²/lipid</td></tr>
-                    <tr><th>Lower leaflet</th><td>{lower_apl:.5f} nm²/lipid</td></tr>
-                </table>
-                <div class="guidance-box">
-                    Reference and composition-weighted APL values are starting
-                    construction estimates, not equilibrium membrane properties.
-                </div>
-            </div>
-            """
 
     builder_html = ""
     if workflow.get("show"):
@@ -1792,7 +1143,6 @@ def render_result_page(
                 <div class="guidance-box">{escape(box_guidance)}</div>
             </div>
 
-            {apl_html}
 
             <div class="section">
                 <h2>Generated LiMBS</h2>
@@ -1846,12 +1196,7 @@ BUILDER_SCRIPT_FILES = {
 
 @app.route("/")
 def home():
-    return render_template(
-        "form.html",
-        lipids=LIPIDS,
-        apl_reference_available=(get_reference_for_ui is not None),
-        apl_availability=build_apl_availability_map(),
-    )
+    return render_template("form.html", lipids=LIPIDS)
 
 
 @app.route("/lipids")
@@ -1912,7 +1257,7 @@ def generate():
             leaflet_mode=leaflet_mode,
         )
 
-        box, box_guidance, box_info = determine_box(
+        box, box_guidance = determine_box(
             resolution=resolution,
             membrane_type=membrane_type,
             leaflet_mode=leaflet_mode,
@@ -1959,7 +1304,6 @@ def generate():
             salt_conc=salt_conc,
             salt_species=salt_species,
             box_guidance=box_guidance,
-            box_info=box_info,
             notation=notation,
             validation=validation,
             workflow=workflow,
